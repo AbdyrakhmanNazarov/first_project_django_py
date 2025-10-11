@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Добавить новую группу</h1>
+
+  <div class="container">
+    <a href="{% url 'create_student' %}">
+      <button class="back-btn">⬅ Назад</button>
+    </a>
+  </div>
+
+  <div class="student_form">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="submit-btn">Создать группу</button>
+    </form>
+  </div>
+{% endblock %}

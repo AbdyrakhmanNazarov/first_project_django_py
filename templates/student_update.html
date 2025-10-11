@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Редактировать студента</h1>
+
+<div class="container">
+  <div class="menu">
+    <div class="page-actions">
+      <a href="{% url 'main' %}"><button class="global-btn">На главную</button></a>
+      <a href="{% url 'student_detail' id=student.id %}"><button class="back-btn">⬅ Назад</button></a>
+    </div>
+  </div>
+</div>
+
+<div class="student_container">
+  <div class="student_form">
+    <form action="" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% if student.avatar %}
+        <div>
+          <p>Текущее изображение:</p>
+          <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="current-avatar">
+        </div>
+      {% endif %}
+
+      {{ form.as_p }}
+
+      <div class="student_form_button">
+        <input type="submit" value="Сохранить изменения" class="submit-btn" />
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <main>
+    <h2>Футболисты</h2>
+
+    <div class="students_container">
+      <div class="menu">
+        <div class="actions">
+          <a href="{% url 'create_student' %}"><button class="create-btn">➕ Добавить студента</button></a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Фильтр студентов</h2>
+      <form method="GET">
+        {% csrf_token %}
+        {{ filter.form.as_div }}
+
+        <div class="actions"> 
+          <button class="create-btn">Фильтр</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="students_container">
+      {% for student in students %}
+        <div class="student_card">
+          <div>
+            <a href="{% url 'student_detail' id=student.id %}">
+              {% if student.avatar %}
+                <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img" />
+              {% else %}
+                Нет аватара
+              {% endif %}
+            </a>
+          </div>
+          <div>Имя: {{ student.name }}</div>
+          <div>Фамилия: {{ student.surname }}</div>
+          <div>Возраст: {{ student.age }}</div>
+          <div>
+            Должность:{% if student.group %}
+              {{ student.group.name }}
+            {% else %}
+              Без группы
+            {% endif %}
+          </div>
+          <div>Email: {{ student.email|default:'Нет email' }}</div>
+          <div>Телефон: {{ student.phone_number }}</div>
+          <div>Дата создания: {{ student.join_date }}</div>
+          <div>Дата обновления: {{ student.updated_date }}</div>
+          <div>
+            Теги:{% for tag in student.tags.all %}
+              <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+              Нет тегов
+            {% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <p>Нет студентов для отображения.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+      <div class="pagination">
+        <div class="pagination_btns">
+          {% if students.has_previous %}
+            <a class="page_link" href="?page={{ students.previous_page_number }}"><</a>
+          {% endif %}
+
+          {% for i in students.paginator.page_range %}
+            {% if students.number == i %}
+              <span class="page_link">{{ i }}</span>
+            {% else %}
+              <a class="page_link" href="?page={{ i }}">{{ i }}</a>
+            {% endif %}
+          {% endfor %}
+
+          {% if students.has_next %}
+            <a class="page_link" href="?page={{ students.next_page_number }}">></a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </main>
+{% endblock %}

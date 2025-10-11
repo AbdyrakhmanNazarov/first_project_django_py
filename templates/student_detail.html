@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h1>Детали студента</h1>
+
+  <div class="container">
+    <div class="menu">
+      <div class="page-actions">
+        <a href="{% url 'main' %}"><button class="back-btn">⬅ Назад</button></a>
+      </div>
+      <div class="actions">
+        <a href="{% url 'student_update' id=student.id %}"><button class="edit-btn">Редактировать</button></a>
+        <a href="{% url 'delete_student' id=student.id %}"><button class="delete-btn">Удалить</button></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="student_container">
+    <div class="student_card_detail">
+      <div class="student_image">
+        {% if student.avatar %}
+          <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img">
+        {% else %}
+          Нет аватара
+        {% endif %}
+      </div>
+
+      <div>Имя: {{ student.name|default:"Нет имени" }}</div>
+      <div>Фамилия: {{ student.surname|default:"Нет фамилии" }}</div>
+      <div>Возраст: {{ student.age|default:"Не указан" }}</div>
+      <div>Номер футболиста: {{ student.number|default:"Не указан" }}</div>
+
+      <div>
+        Группа: 
+        {% if student.group %}
+          {{ student.group.name }}
+        {% else %}
+          Без группы
+        {% endif %}
+      </div>
+
+      <div>Email: {{ student.email|default:"Нет email" }}</div>
+      <div>Телефон: {{ student.phone_number|default:"Нет номера" }}</div>
+      <div>Комментарий: {{ student.description|default:"Нет комментария" }}</div>
+      <div>Дата присоединения: {{ student.join_date }}</div>
+      <div>Дата обновления: {{ student.updated_date }}</div>
+
+      <div>Теги: 
+        {% if student.tags.all %}
+          {% for tag in student.tags.all %}
+            <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% else %}
+          Нет тегов
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

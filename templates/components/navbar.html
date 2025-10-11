@@ -1,0 +1,19 @@
+{% load static %}
+<header>
+  <div class="logo">
+    <a href="{% url 'main' %}"><img src="{% static 'svg/real-madrid-c-f.svg' %}" alt="" /></a>
+    <h1>Реал Мадрид</h1>
+  </div>
+
+  <nav class="navigations">
+    <a href="{% url 'main' %}">Главная</a>
+    <a href="#">Продукт</a>
+    <a href="#">О нас</a>
+    <a href="#">Контакты</a>
+  </nav>
+
+  <form action="{% url 'main' %}" method="GET">
+    <input type="text" name="search" id="" value="{{ search }}" />
+    <input type="submit" />
+  </form>
+</header>

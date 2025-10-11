@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <h1>Создать студента</h1>
+
+  <div class="container">
+    <div class="menu">
+      <div class="page-actions">
+        <a href="{% url 'main' %}"><button class="back-btn">⬅ Назад</button></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="student_container">
+    <div class="student_form">
+      <form action="{% url 'create_student' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div class="extra-links">
+          <a href="{% url 'create_group' %}"><button type="button" class="create-btn">➕ Добавить новую группу</button></a>
+          <a href="{% url 'create_tag' %}"><button type="button" class="create-btn">➕ Добавить новый тег</button></a>
+        </div>
+
+        <div class="student_form_button">
+          <input type="submit" value="Создать студента" class="submit-btn" />
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
