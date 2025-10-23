@@ -1158,3 +1158,437 @@
 #     list_display = ("id", "name")
 #     search_fields = ("name",)
 # ================================================================================================================================================
+# FILTER
+
+# filter.py
+# import django_filters
+
+# from .models import Student, Group, Tag
+# from django import forms
+
+
+# class StudentFilter(django_filters.FilterSet):
+#     # name = django_filters.CharFilter(lookup_expr="icontains", label="Имя студента")
+#     group = django_filters.ModelChoiceFilter(
+#         queryset=Group.objects.all(), widget=forms.Select, empty_label="Выбрать группу",
+#     )
+
+#     tags = django_filters.ModelMultipleChoiceFilter(
+#         queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple
+#     )
+
+#     class Meta:
+#         model = Student
+#         fields = ( "age", "group", "tags")
+# --------------------------------------------------------------------
+
+# html
+# <div>
+#       <h2>Фильтр студентов</h2>
+#       <form method="GET">
+#         {% csrf_token %}
+#         {{ filter.form.as_div }}
+
+#         <div class="actions">
+#           <button class="create-btn">Фильтр</button>
+#         </div>
+#       </form>
+#     </div>
+# --------------------------------------------------------------------
+# settings
+
+# INSTALLED_APPS = [
+#     "django.contrib.admin",
+#     "django.contrib.auth",
+#     "django.contrib.contenttypes",
+#     "django.contrib.sessions",
+#     "django.contrib.messages",
+#     "django.contrib.staticfiles",
+#     "students",
+#     "phonenumber_field",
+#     "django_filters",
+# ]
+# ================================================================================================================================================
+# views.py
+# from django.shortcuts import render
+
+# def my_view(request):
+#     # Получаем URL предыдущей страницы, если нет — используем "/"
+#     referer = request.META.get('HTTP_REFERER', '/')
+#     return render(request, 'my_template.html', {'referer': referer})
+# ------------------------------------------------------------------------------------
+
+# html
+# <!DOCTYPE html>
+# <html>
+# <head>
+#     <title>Пример Previous Page</title>
+# </head>
+# <body>
+#     <h1>Текущая страница</h1>
+#     <a href="{{ referer }}"><button>Назад</button></a>
+# </body>
+# </html>
+
+# ================================================================================================================================================
+# Добавить новый тег
+# Добавить новую группу
+# html
+# <div class="extra-links">
+#           <a href="{% url 'create_group' %}"><button type="button" class="create-btn">➕ Добавить новую группу</button></a>
+#           <a href="{% url 'create_tag' %}"><button type="button" class="create-btn">➕ Добавить новый тег</button></a>
+#         </div>
+
+# ------------------------------------------------------------------------------------
+# Page create_group or create_tag html
+
+# {% extends 'base.html' %}
+# {% load static %}
+
+# {% block content %}
+#   <h1>Добавить новую группу</h1>
+
+#   <div class="container">
+#     <a href="{% url 'create_student' %}">
+#       <button class="back-btn">⬅ Назад</button>
+#     </a>
+#   </div>
+
+#   <div class="student_form">
+#     <form method="POST">
+#       {% csrf_token %}
+#       {{ form.as_p }}
+#       <button type="submit" class="submit-btn">Создать группу</button>
+#     </form>
+#   </div>
+# {% endblock %}
+# ------------------------------------------------------------------------------------
+# views.py
+# Создание новой группы
+# def create_group(request):
+#     if request.method == "POST":
+#         form = GroupForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("create_student")  # возвращаемся на создание студента
+#     else:
+#         form = GroupForm()
+#     return render(request, "create_group.html", {"form": form})
+
+
+# # Создание нового тега
+# def create_tag(request):
+#     if request.method == "POST":
+#         form = TagForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("create_student")  # возвращаемся на создание студента
+#     else:
+#         form = TagForm()
+#     return render(request, "create_tag.html", {"form": form})
+# ------------------------------------------------------------------------------------
+# forms.py
+# class GroupForm(forms.ModelForm):
+#     class Meta:
+#         model = Group
+#         fields = ["name"]
+#         labels = {"name": "Название группы"}
+#         widgets = {
+#             "name": forms.TextInput(attrs={"class": "student_input"}),
+#         }
+
+
+# class TagForm(forms.ModelForm):
+#     class Meta:
+#         model = Tag
+#         fields = ["name"]
+#         labels = {"name": "Название тега"}
+#         widgets = {
+#             "name": forms.TextInput(attrs={"class": "student_input"}),
+#         }
+# ------------------------------------------------------------------------------------
+# urls.py
+
+# path("create-group/", create_group, name="create_group"),
+# path("create-tag/", create_tag, name="create_tag"),
+# ================================================================================================================================================
+# Git and GitHub
+# Скачиваем Git и Устанавливаем GitBash (Обращаем внимание при установке при выборе компонентов)
+# Создаем аккаунт на GitHub
+# И сщздаем новый репозиторий
+# Важно отметить .gitignore - python
+
+# Создаем новый файл .gitignore - (есть готовый шаблон вставляем (особенно: venv venv/ migrations migrations/ __pycache__))
+# Не забываем requirements.txt
+
+# git init
+# git add .
+# git commit -m "first commit"
+# git branch -M main
+# git remove add origin https://github.com/
+# git push-u orrigin main
+
+# далее будут еще команды приобновлении по GutHub
+# ================================================================================================================================================
+# Не забываем лайфхаки
+
+# 1. empty_label = "Выбрать"
+
+
+# ================================================================================================================================================
+# CBV
+# urls.py (local)
+
+# from django.urls import path
+# from students.views import (
+#     StudentListView,
+#     StudentDetailView,
+#     StudentUpdateView,
+#     StudentDeleteView,
+#     StudentCreateView,
+#     GroupCreateView,
+#     TagCreateView,
+# )
+
+# urlpatterns = [
+#     # Students
+#     path("", StudentListView.as_view(), name="main"),
+#     path("students/create/", StudentCreateView.as_view(), name="create_student"),
+#     path("students/<int:pk>/", StudentDetailView.as_view(), name="student_detail"),
+#     path("students/<int:pk>/update/", StudentUpdateView.as_view(), name="student_update"),
+#     path("students/<int:pk>/delete/", StudentDeleteView.as_view(), name="student_delete"),
+
+#     # Groups & Tags
+#     path("groups/create/", GroupCreateView.as_view(), name="create_group"),
+#     path("tags/create/", TagCreateView.as_view(), name="create_tag"),
+# ]
+
+# urls.py (global)
+# from django.contrib import admin
+# from django.urls import path, include
+# from django.conf import settings
+# from django.conf.urls.static import static
+
+
+# urlpatterns = [path("admin/", admin.site.urls), path("", include("students.urls"))]
+
+# # Static & Media
+# if settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# ------------------------------------------------------------------------------------------------------------------------------------------
+# views Дженерик
+# from django.urls import reverse_lazy
+# from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+# from students.models import Student, Group, Tag
+# from students.forms import StudentModelForm, GroupForm, TagForm
+# from students.filters import StudentFilter
+
+# # ===============================
+# # Список студентов с фильтром и пагинацией
+# # ===============================
+# class StudentListView(ListView):
+#     model = Student
+#     template_name = "index.html"
+#     context_object_name = "students"
+#     paginate_by = 3  # студентов на одной странице
+
+#     def get_queryset(self):
+#         queryset = super().get_queryset()
+#         self.filterset = StudentFilter(self.request.GET, queryset=queryset)
+#         return self.filterset.qs
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['filter'] = self.filterset
+#         return context
+
+
+# # ===============================
+# # Детали студента
+# # ===============================
+# class StudentDetailView(DetailView):
+#     model = Student
+#     template_name = "student_detail.html"
+#     context_object_name = "student"
+
+
+# # ===============================
+# # Создание студента
+# # ===============================
+# class StudentCreateView(CreateView):
+#     model = Student
+#     form_class = StudentModelForm
+#     template_name = "student_create.html"
+#     success_url = reverse_lazy("main")
+
+
+# # ===============================
+# # Обновление студента
+# # ===============================
+# class StudentUpdateView(UpdateView):
+#     model = Student
+#     form_class = StudentModelForm
+#     template_name = "student_update.html"
+
+#     def get_success_url(self):
+#         return reverse_lazy("student_detail", kwargs={"pk": self.object.pk})
+
+
+# # ===============================
+# # Удаление студента
+# # ===============================
+# class StudentDeleteView(DeleteView):
+#     model = Student
+#     template_name = "student_confirm_delete.html"
+#     success_url = reverse_lazy("main")
+
+
+# # ===============================
+# # Создание группы
+# # ===============================
+# class GroupCreateView(CreateView):
+#     model = Group
+#     form_class = GroupForm
+#     template_name = "create_group.html"
+#     success_url = reverse_lazy("create_student")
+
+
+# # ===============================
+# # Создание тега
+# # ===============================
+# class TagCreateView(CreateView):
+#     model = Tag
+#     form_class = TagForm
+#     template_name = "create_tag.html"
+#     success_url = reverse_lazy("create_student")
+# ----------------------------------------------------------------
+# Кастомный views
+
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.views import View
+# from students.models import Student, Group
+# from students.forms import StudentModelForm, GroupForm, TagForm
+# from django.views.generic import ListView
+
+# # ===============================
+# # Список студентов
+# # ===============================
+# class StudentView(ListView):
+#     def get(self, request):
+#         students = Student.objects.all()
+#         return render(request, "index.html", {"students": students})
+
+#     def post(self, request):
+#         name = request.POST.get("name")
+#         Student.objects.create(name=name)
+#         return redirect("main")
+
+
+# # ===============================
+# # Детали студента
+# # ===============================
+# class StudentDetailView(ListView):
+#     def get(self, request, id):
+#         student = get_object_or_404(Student, id=id)
+#         return render(request, "student_detail.html", {"student": student})
+
+
+# # ===============================
+# # Обновление студента
+# # ===============================
+# class StudentUpdateView(ListView):
+#     def get(self, request, id):
+#         student = get_object_or_404(Student, id=id)
+#         form = StudentModelForm(instance=student)
+#         return render(
+#             request, "student_update.html", {"form": form, "student": student}
+#         )
+
+#     def post(self, request, id):
+#         student = get_object_or_404(Student, id=id)
+#         form = StudentModelForm(request.POST, request.FILES, instance=student)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("student_detail", id=student.id)
+#         return render(
+#             request, "student_update.html", {"form": form, "student": student}
+#         )
+
+
+# # ===============================
+# # Удаление студента
+# # ===============================
+# class StudentDeleteView(ListView):
+#     def get(self, request, id):
+#         student = get_object_or_404(Student, id=id)
+#         student.delete()
+#         return redirect("main")
+
+
+# # ===============================
+# # Создание студента
+# # ===============================
+# class StudentCreateView(ListView):
+#     def get(self, request):
+#         form = StudentModelForm()
+#         return render(request, "student_create.html", {"form": form})
+
+#     def post(self, request):
+#         form = StudentModelForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             student = form.save(commit=False)
+#             student.save()
+#             form.save_m2m()
+#             return redirect("main")
+#         return render(request, "student_create.html", {"form": form})
+
+
+# # ===============================
+# # Создание группы
+# # ===============================
+# class GroupCreateView(ListView):
+#     def get(self, request):
+#         form = GroupForm()
+#         return render(request, "create_group.html", {"form": form})
+
+#     def post(self, request):
+#         form = GroupForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("create_student")  # после создания — к форме студента
+#         return render(request, "create_group.html", {"form": form})
+
+
+# # ===============================
+# # Создание тега
+# # ===============================
+# class TagCreateView(ListView):
+#     def get(self, request):
+#         form = TagForm()
+#         return render(request, "create_tag.html", {"form": form})
+
+#     def post(self, request):
+#         form = TagForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("create_student")  # после создания — к форме студента
+#         return render(request, "create_tag.html", {"form": form})
+# ---------------------------------------------------------------------------------------------------
+# html
+# student.pk
+# # ============================================================================================================================
+# template.views
+# Изменения в templates то есть отдель создаем student_list.html about.html (учитывая пагинацию и фильтр)
+# Изменения в настройках views.py
+
+# # ============================================================================================================================
+# signals.py
+# Создаем signals.py
+# Изменения в настройках models.py views.py apps.py
+# (можно без специальной страницы оплаты)
+
+# # ============================================================================================================================
+
+# 21.10.2025
+# Auth Авторизация

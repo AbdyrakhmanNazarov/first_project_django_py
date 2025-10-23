@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block blocktitle %}Регистрация{% endblock %}
+
+{% block content %}
+<main>
+  <h1>Регистрация нового пользователя</h1>
+
+  <div class="student_container">
+    <div class="student_form">
+      <form method="post" action="{% url 'register_acc' %}">
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="student_input">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+              <div class="success-message">
+                {% for error in field.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        <div class="student_form_button">
+          <input type="submit" value="Создать аккаунт" class="btn btn-primary">
+        </div>
+      </form>
+
+      <p>Уже есть аккаунт? <a href="{% url 'login_acc' %}">Войти</a></p>
+
+      {% if messages %}
+        <div class="success-message">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+{% endblock %}

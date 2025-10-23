@@ -4,18 +4,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Django_lessons</title>
-    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
+    <title>
+      {% block blocktitle %}
+   
+      {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
+    {% include 'components/navbar.html' %}
 
-    {% include "components/navbar.html" %}
+    <div class="cont_min_page">
+      {% block content %}
 
-    {% block content %}
+    {% endblock %}
+    </div>
 
-    {% endblock %} 
-
-    {% include "components/footer.html" %}
-   
+    {% include 'components/footer.html' %}
   </body>
 </html>

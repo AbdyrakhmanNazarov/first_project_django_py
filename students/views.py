@@ -1,100 +1,171 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from django.core.paginator import Paginator
-from students.models import Student, Coach, Group
-from students.forms import StudentForm, StudentModelForm, GroupForm, TagForm
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from students.models import Student, Group, Tag, StudentContract
+from students.forms import StudentModelForm, GroupForm, TagForm, PaymentForm
 from students.filters import StudentFilter
 
 
-# Главная страница
-def main(request):
-    students = Student.objects.all()
-    teachers = Coach.objects.all()
-    search = request.GET.get("search")
+# ===============================
+# Главная страница (открыта для всех)
+# ===============================
+class MainTemplateView(TemplateView):
+    template_name = "index.html"
 
-    if search:
-        students = students.filter(name__icontains=search)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filterset = StudentFilter(self.request.GET, queryset=Student.objects.all())
+        students_list = filterset.qs
 
-    filter_set = StudentFilter(request.GET, queryset=students)
+        paginator = Paginator(students_list, 3)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
-    paginator = Paginator(filter_set.qs, 4)
-    page_number = request.GET.get("page")
-    students = paginator.get_page(page_number)
-
-    return render(
-        request,
-        "index.html",
-        {
-            "students": students,
-            "teachers": teachers,
-            "search": search,
-            "is_paginated": students.has_other_pages(),
-            "filter": filter_set,
-        },
-    )
+        context.update({
+            "students": page_obj,
+            "page_obj": page_obj,
+            "paginator": paginator,
+            "is_paginated": page_obj.has_other_pages(),
+            "filter": filterset,
+            "title": "Главная страница"
+        })
+        return context
 
 
+# ===============================
+# About страница
+# ===============================
+class AboutTemplateView(TemplateView):
+    template_name = "about.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "About Page"
+        return context
+
+
+# ===============================
+# Личный кабинет (только авторизованные)
+# ===============================
+class StudentListView(LoginRequiredMixin, ListView):
+    login_url = 'login_acc'
+    model = Student
+    template_name = "student_list.html"
+    context_object_name = "students"
+    paginate_by = 3
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = StudentFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "filter": self.filterset,
+            "title": "Личный кабинет"
+        })
+        return context
+
+
+# ===============================
 # Детали студента
-def student_detail(request, id):
-    student = get_object_or_404(Student, id=id)
-    return render(request, "student_detail.html", {"student": student})
+# ===============================
+class StudentDetailView(LoginRequiredMixin, DetailView):
+    login_url = 'login_acc'
+    model = Student
+    template_name = "student_detail.html"
+    context_object_name = "student"
 
 
-# Создание нового студента
-def create_student(request):
-    if request.method == "POST":
-        form = StudentModelForm(request.POST, request.FILES)
-        if form.is_valid():
-            student = form.save(commit=False)
-            student.save()
-            form.save_m2m()  # сохраняем ManyToMany (tags)
-            return redirect("main")
-    else:
-        form = StudentModelForm()
-
-    return render(request, "student_create.html", {"form": form})
+# ===============================
+# Создание студента
+# ===============================
+class StudentCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'login_acc'
+    model = Student
+    form_class = StudentModelForm
+    template_name = "student_create.html"
+    success_url = reverse_lazy("student_list")
 
 
+# ===============================
 # Обновление студента
-def student_update(request, id):
-    student = get_object_or_404(Student, id=id)
+# ===============================
+class StudentUpdateView(LoginRequiredMixin, UpdateView):
+    login_url = 'login_acc'
+    model = Student
+    form_class = StudentModelForm
+    template_name = "student_update.html"
 
-    if request.method == "POST":
-        form = StudentModelForm(request.POST, request.FILES, instance=student)
-        if form.is_valid():
-            form.save()
-            return redirect("student_detail", id=student.id)
-    else:
-        form = StudentModelForm(instance=student)
-
-    return render(request, "student_update.html", {"form": form, "student": student})
+    def get_success_url(self):
+        return reverse_lazy("student_detail", kwargs={"pk": self.object.pk})
 
 
+# ===============================
 # Удаление студента
-def delete_student(request, id):
-    student = get_object_or_404(Student, id=id)
-    student.delete()
-    return redirect("main")
+# ===============================
+class StudentDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = 'login_acc'
+    model = Student
+    template_name = "student_confirm_delete.html"
+    success_url = reverse_lazy("student_list")
 
 
-# Создание новой группы
-def create_group(request):
-    if request.method == "POST":
-        form = GroupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("create_student")  # возвращаемся на создание студента
+# ===============================
+# Создание группы
+# ===============================
+class GroupCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'login_acc'
+    model = Group
+    form_class = GroupForm
+    template_name = "create_group.html"
+    success_url = reverse_lazy("create_student")
+
+
+# ===============================
+# Создание тега
+# ===============================
+class TagCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'login_acc'
+    model = Tag
+    form_class = TagForm
+    template_name = "create_tag.html"
+    success_url = reverse_lazy("create_student")
+
+
+# ===============================
+# Страница оплаты студента (GET)
+# ===============================
+@login_required(login_url='login_acc')
+def student_payment_page(request, pk):
+    contract = get_object_or_404(StudentContract, pk=pk)
+    form = PaymentForm(instance=contract)
+    return render(request, "student_payment.html", {"contract": contract, "form": form})
+
+
+# ===============================
+# Обработка оплаты студента (POST)
+# ===============================
+@login_required(login_url='login_acc')
+@require_POST
+def student_payment_view(request, pk):
+    contract = get_object_or_404(StudentContract, pk=pk)
+    form = PaymentForm(request.POST, instance=contract)
+
+    if form.is_valid():
+        form.save()
+        messages.success(
+            request,
+            f"Оплата {form.cleaned_data['amount']} успешно проведена для {contract.student.name}."
+        )
     else:
-        form = GroupForm()
-    return render(request, "create_group.html", {"form": form})
+        messages.error(request, "Не удалось провести оплату. Проверьте сумму.")
 
-
-# Создание нового тега
-def create_tag(request):
-    if request.method == "POST":
-        form = TagForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("create_student")  # возвращаемся на создание студента
-    else:
-        form = TagForm()
-    return render(request, "create_tag.html", {"form": form})
+    return redirect("student_list")

@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
-
 {% load static %}
+
+{% block blocktitle %}
+  Создать студента
+{% endblock %}
 
 {% block content %}
   <h1>Создать студента</h1>
@@ -17,7 +20,6 @@
     <div class="student_form">
       <form action="{% url 'create_student' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
         {{ form.as_p }}
 
         <div class="extra-links">

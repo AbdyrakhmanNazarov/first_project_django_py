@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block blocktitle %}Оплата студента{% endblock %}
+
+{% block content %}
+<main>
+  <h2>Оплата студента {{ contract.student.name }}</h2>
+  <p>Текущий баланс: {{ contract.balance }}</p>
+
+  <!-- Форма для произвольной суммы -->
+  <form method="post" action="{% url 'student_payment' contract.pk %}">
+      {% csrf_token %}
+      <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+      {{ form.amount }}
+      <button type="submit" class="pay-btn">Оплатить</button>
+  </form>
+
+  <!-- Ссылка вернуться к списку студентов -->
+  <p><a href="{% url 'student_list' %}">Вернуться к списку студентов</a></p>
+</main>
+{% endblock %}

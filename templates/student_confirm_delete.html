@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+  <div class="students_container">
+    <div class="student_card">
+      <h2>Удалить студента</h2>
+
+      <p>
+        Вы уверены, что хотите удалить студента <strong>{{ student.name }} {{ student.surname }}</strong>?
+      </p>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+          <button type="submit" class="create-btn" style="background-color: red;">🗑 Удалить</button>
+          <a href="{% url 'student_detail' id=student.id %}">
+            <button type="button" class="create-btn" style="background-color: gray;">Отмена</button>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

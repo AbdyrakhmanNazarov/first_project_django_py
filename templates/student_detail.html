@@ -10,8 +10,8 @@
         <a href="{% url 'main' %}"><button class="back-btn">⬅ Назад</button></a>
       </div>
       <div class="actions">
-        <a href="{% url 'student_update' id=student.id %}"><button class="edit-btn">Редактировать</button></a>
-        <a href="{% url 'delete_student' id=student.id %}"><button class="delete-btn">Удалить</button></a>
+        <a href="{% url 'student_update' pk=student.pk %}"><button class="edit-btn">Редактировать</button></a>
+        <a href="{% url 'student_delete' pk=student.pk %}"><button class="delete-btn">Удалить</button></a>
       </div>
     </div>
   </div>
@@ -47,7 +47,7 @@
       <div>Дата обновления: {{ student.updated_date }}</div>
 
       <div>Теги: 
-        {% if student.tags.all %}
+        {% if student.tags.exists %}
           {% for tag in student.tags.all %}
             <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
           {% endfor %}
@@ -55,6 +55,18 @@
           Нет тегов
         {% endif %}
       </div>
+
+      {% if student.contract %}
+        <div class="student_payment">
+          <strong>Баланс:</strong> {{ student.contract.balance|default:"0" }}
+          <form method="post" action="{% url 'student_payment' student.contract.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="amount" value="8000">
+            <button type="submit" class="pay-btn">Оплатить 8000</button>
+          </form>
+          <a href="{% url 'student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>
+        </div>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

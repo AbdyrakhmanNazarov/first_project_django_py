@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block blocktitle %}Список студентов{% endblock %}
+
+{% block content %}
+<main>
+  <h2>Футболисты</h2>
+
+  <div class="top_panel">
+    <div class="actions">
+      <a href="{% url 'create_student' %}" class="create-btn">➕ Добавить студента</a>
+    </div>
+
+    <div class="filter_section">
+      <form method="GET">
+        {{ filter.form.as_div }}
+        <div class="actions">
+          <button class="create-btn">Применить фильтр</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="students_container">
+    {% for student in students %}
+      <div class="student_card">
+        <a href="{% url 'student_detail' student.pk %}">
+          {% if student.avatar %}
+            <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img" />
+          {% else %}
+            <div class="no_avatar">Нет аватара</div>
+          {% endif %}
+        </a>
+
+        <div class="student_info">
+          <div><strong>Имя:</strong> {{ student.name|default:'—' }}</div>
+          <div><strong>Фамилия:</strong> {{ student.surname|default:'—' }}</div>
+          <div><strong>Возраст:</strong> {{ student.age|default:'—' }}</div>
+          <div><strong>Номер:</strong> {{ student.number|default:'—' }}</div>
+          <div><strong>Группа:</strong> {% if student.group %}{{ student.group.name }}{% else %}Без группы{% endif %}</div>
+          <div><strong>Email:</strong> {{ student.email|default:'—' }}</div>
+          <div><strong>Телефон:</strong> {{ student.phone_number|default:'—' }}</div>
+
+          <div>
+            <strong>Баланс:</strong> {{ student.contract.balance|default:'0' }}
+            {% if student.contract %}
+              <!-- Форма POST для фиксированной оплаты -->
+              <form method="post" action="{% url 'student_payment' student.contract.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="amount" value="8000">
+                <button type="submit" class="pay-btn">Оплатить 8000</button>
+              </form>
+
+              <!-- Ссылка на страницу с формой для произвольной суммы -->
+              <a href="{% url 'student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>
+            {% endif %}
+          </div>
+
+          <div><strong>Дата создания:</strong> {{ student.join_date }}</div>
+          <div><strong>Дата обновления:</strong> {{ student.updated_date }}</div>
+
+          <div><strong>Теги:</strong>
+            {% for tag in student.tags.all %}
+              <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
+            {% empty %}
+              Нет тегов
+            {% endfor %}
+          </div>
+
+          <div class="student_actions">
+            <a href="{% url 'student_update' student.pk %}" class="edit-btn">✏️ Редактировать</a>
+            <a href="{% url 'student_delete' student.pk %}" class="delete-btn">🗑 Удалить</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Нет студентов для отображения.</p>
+    {% endfor %}
+  </div>
+
+  {% if is_paginated %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a class="page_link" href="?page={{ page_obj.previous_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">Предыдущая</a>
+      {% else %}
+        <span class="page_link disabled">Предыдущая</span>
+      {% endif %}
+
+      {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+          <span class="page_link current">{{ i }}</span>
+        {% else %}
+          <a class="page_link" href="?page={{ i }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">{{ i }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a class="page_link" href="?page={{ page_obj.next_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}">Следующая</a>
+      {% else %}
+        <span class="page_link disabled">Следующая</span>
+      {% endif %}
+    </div>
+  {% endif %}
+</main>
+{% endblock %}
