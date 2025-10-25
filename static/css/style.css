@@ -9,101 +9,103 @@
 }
 
 body {
-    background: #f9f9f9;
-    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url("../images/background_RM/3009.jpg_wh860.jpg") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #fff;
     line-height: 1.5;
 }
 
-.cont_min_page {
-    min-height: 100vh;
-}
-
 /* ============================= */
-/* Navbar                         */
+/* Header и Navbar               */
 /* ============================= */
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 2rem;
-    background: #222;
-    color: #fff;
-    flex-wrap: wrap;
-    gap: 1rem;
+    padding: 15px 30px;
+    background: transparent;
+    backdrop-filter: none;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 header .logo {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 10px;
 }
 
 header .logo img {
-    width: 50px;
     height: 50px;
-    object-fit: contain;
+    width: auto;
 }
 
-header h1 {
+header .logo h1 {
     font-size: 1.5rem;
-    font-weight: 700;
-}
-
-header .navigations {
-    display: flex;
-    gap: 1.5rem;
+    color: #fff;
 }
 
 header .navigations a {
-    color: #fff;
+    margin-left: 15px;
     text-decoration: none;
+    color: #fff;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: color 0.2s;
 }
 
 header .navigations a:hover {
-    color: #4a90e2;
+    color: #00aaff;
 }
 
 header form {
     display: flex;
-    gap: 0.5rem;
+    gap: 5px;
 }
 
-header form input[type="text"],
-header form select {
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
+header input[type="text"] {
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-header form input[type="submit"] {
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
+header input[type="submit"] {
+    padding: 5px 10px;
     border: none;
-    background: #4a90e2;
+    background-color: #0052cc;
     color: #fff;
-    font-weight: 600;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
 }
 
-header form input[type="submit"]:hover {
-    background: #357ABD;
-    transform: translateY(-1px);
+header input[type="submit"]:hover {
+    background-color: #003d99;
 }
 
 /* ============================= */
-/* Footer                         */
+/* Footer                        */
 /* ============================= */
 footer {
-    background: #222;
-    color: #fff;
-    padding: 1.5rem 2rem;
     text-align: center;
-    margin-top: 2rem;
+    padding: 20px;
+    background: transparent;
+    backdrop-filter: none;
+    margin-top: auto;
+    color: #fff;
+}
+
+/* ============================= */
+/* Контейнер страницы            */
+/* ============================= */
+.cont_min_page {
+    flex: 1;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ============================= */
@@ -111,197 +113,95 @@ footer {
 /* ============================= */
 .students_container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(clamp(220px, 23%, 280px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    padding: 2rem;
+    margin-bottom: 20px; /* место для пагинации */
 }
 
-.student_card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.student_card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-}
-
-.student_card img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-}
-
-.tag {
-    display: inline-block;
-    background-color: #eee;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-right: 3px;
-    font-size: 0.85rem;
-}
-
-/* ============================= */
-/* Детальная карточка             */
-/* ============================= */
-.student_container {
+.student_card,
+.student_card_detail {
+    width: 300px;          /* фиксированная ширина */
+    height: 400px;         /* фиксированная высота */
+    background: rgba(255, 255, 255, 0.85);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: flex;
-    justify-content: center;
-    padding: 2rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s;
+    color: #333;
+}
+
+/* при наведении */
+.student_card:hover,
+.student_card_detail:hover {
+    transform: translateY(-5px);
+}
+
+.student_card img,
+.student_card_detail img.avatar-img,
+.current-avatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
 }
 
 .student_card_detail {
-    background: #fff;
-    border-radius: 20px;
-    padding: 2rem;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    min-height: auto;
+    text-align: left;
+    align-items: flex-start;
+}
+
+/* ============================= */
+/* Центрирование карточки detail */
+.detail-page .cont_min_page {
     display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    font-size: 1.05rem;
+    justify-content: center;
+    align-items: center; /* вертикальное центрирование */
 }
 
-.student_image img,
-.current-avatar {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 16px;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.detail-page .student_card_detail {
+    margin: 0;
 }
 
 /* ============================= */
-/* Форма редактирования / создания */
+/* Кнопки                        */
 /* ============================= */
-.student_form {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 16px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.student_input {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.2rem;
-}
-
-.student_input label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.student_input input,
-.student_input select,
-.student_input textarea,
-.student_input input[type="file"] {
-    padding: 0.7rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border 0.2s ease, box-shadow 0.2s ease;
-}
-
-.student_input input:focus,
-.student_input select:focus,
-.student_input textarea:focus,
-.student_input input[type="file"]:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 6px rgba(74, 144, 226, 0.3);
-    outline: none;
-}
-
-.student_form_button input[type="submit"] {
-    background: #4a90e2;
-    color: #fff;
-    border: none;
-    padding: 0.8rem 1.6rem;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.student_form_button input[type="submit"]:hover {
-    background: #357ABD;
-    transform: translateY(-2px);
-}
-
-/* ============================= */
-/* Сообщение об успехе           */
-/* ============================= */
-.success-message {
-    background: #eafaf1;
-    border: 1px solid #2ecc71;
-    color: #27ae60;
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-/* ============================= */
-/* Кнопки (редактировать, удалить, назад, добавить) */
-/* ============================= */
-.btn {
-    display: inline-block;
-    padding: 0.6rem 1.2rem;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-}
-
-.btn-primary,
 .create-btn,
-.global-btn,
-.edit-btn {
-    background: #4a90e2;
+.submit-btn,
+.back-btn,
+.edit-btn,
+.delete-btn,
+.pay-btn {
+    padding: 8px 12px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
     color: #fff;
+    background-color: #0052cc;
+    display: inline-block;
+    text-align: center;
+    font-size: 0.9rem;
 }
 
-.btn-primary:hover,
+.back-btn { background-color: gray; }
+.delete-btn { background-color: red; }
+.edit-btn { background-color: orange; }
+.pay-btn { background-color: green; }
+
 .create-btn:hover,
-.global-btn:hover,
-.edit-btn:hover {
-    background: #357ABD;
-}
-
-.btn-danger,
-.delete-btn {
-    background: #e74c3c;
-    color: #fff;
-}
-
-.btn-danger:hover,
-.delete-btn:hover {
-    background: #c0392b;
-}
-
-.btn-secondary,
-.back-btn {
-    background: #95a5a6;
-    color: #fff;
-}
-
-.btn-secondary:hover,
-.back-btn:hover {
-    background: #7f8c8d;
+.submit-btn:hover,
+.back-btn:hover,
+.edit-btn:hover,
+.delete-btn:hover,
+.pay-btn:hover {
+    opacity: 0.9;
 }
 
 /* ============================= */
@@ -310,123 +210,90 @@ footer {
 .pagination {
     display: flex;
     justify-content: center;
-    margin: 20px 0;
-}
-
-.pagination_btns {
-    display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    background-color: #f5f5f5;
-    padding: 10px 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
 }
 
-.pagination_btns:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-.page_link {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 6px;
+.pagination .page_link,
+.pagination span {
+    padding: 6px 10px;
+    background: rgba(0, 82, 204, 0.5);
+    color: #fff;
+    border-radius: 5px;
     text-decoration: none;
-    color: #5a3e36;
     font-weight: 500;
-    transition: all 0.3s ease;
+    min-width: 40px;
+    text-align: center;
+    transition: background 0.2s, transform 0.2s;
 }
 
-.page_link:hover {
-    background-color: #5a3e36;
-    color: #fff;
-    transform: scale(1.05);
+.pagination .page_link:hover {
+    background: rgba(0, 82, 204, 0.8);
+    transform: translateY(-2px);
 }
 
-.pagination_btns span.page_link {
-    background-color: #5a3e36;
-    color: #fff;
+.pagination .current {
+    background: #0052cc;
     font-weight: 600;
+}
+
+.pagination .disabled {
+    opacity: 0.5;
     pointer-events: none;
-    transform: scale(1.05);
-}
-
-.page_link:first-child,
-.page_link:last-child {
-    font-weight: 700;
-    font-size: 1.1rem;
 }
 
 /* ============================= */
-/* Адаптив под мобильные          */
+/* Sidebar и фильтр               */
 /* ============================= */
-@media (max-width: 768px) {
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-
-    .students_container {
-        grid-template-columns: repeat(auto-fit, minmax(clamp(180px, 45%, 250px), 1fr));
-    }
-
-    .student_card_detail,
-    .student_form {
-        padding: 1.5rem;
-    }
+.sidebar,
+.filter-aside {
+    background: rgba(255, 255, 255, 0.85);
+    padding: 15px;
+    border-radius: 10px;
+    color: #000; /* черный текст внутри фильтров */
 }
 
-@media (max-width: 480px) {
-    .pagination_btns {
-        gap: 4px;
-        padding: 8px;
-    }
-
-    .page_link {
-        padding: 4px 8px;
-        font-size: 14px;
-    }
+.filter-aside form label,
+.filter-aside form select,
+.filter-aside form input,
+.filter-aside form button {
+    color: #000;
 }
 
-/* ============================= */
-/* Панель авторизации сверху      */
-/* ============================= */
-.auth-bar {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    padding: 1rem 2rem;
-    background-color: #f5f5f5;
-}
-
-.auth-bar span {
-    font-weight: 600;
-}
-
-.auth-bar a {
-    text-decoration: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.auth-bar a[href$="login_acc"] {
-    background-color: #4a90e2;
+.filter-aside form button {
+    margin-top: 10px;
+    background-color: #0052cc;
     color: #fff;
 }
 
-.auth-bar a[href$="login_acc"]:hover {
-    background-color: #357ABD;
+/* ============================= */
+/* Адаптивность                  */
+/* ============================= */
+@media (max-width: 1024px) {
+    header { flex-direction: column; align-items: flex-start; }
+    header .navigations { margin-top: 10px; }
+    .content-wrapper { flex-direction: column; }
+    .filter-aside { width: 100%; margin-top: 20px; }
 }
 
-.auth-bar a[href$="logout_acc"] {
-    background-color: #e74c3c;
+@media (max-width: 600px) {
+    header .logo h1 { font-size: 1.2rem; }
+    header .navigations a { font-size: 0.9rem; }
+    .student_card,
+    .student_card_detail { min-height: auto; }
+    .students_container { grid-template-columns: 1fr; }
+}
+
+/* ============================= */
+/* Контент блоки (About, Contacts, Admin Page) */
+/* ============================= */
+.content-block {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    line-height: 1.6;
     color: #fff;
-}
-
-.auth-bar a[href$="logout_acc"]:hover {
-    background-color: #c0392b;
 }

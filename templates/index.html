@@ -6,98 +6,100 @@
 {% endblock %}
 
 {% block content %}
-<main>
-  <!-- Панель авторизации -->
-  <div class="auth-bar">
-    {% if user.is_authenticated %}
-      <span>Здравствуйте, {{ user.username }}!</span>
-      <a href="{% url 'student_list' %}">Личный кабинет</a>  {# ссылка на student_list.html #}
-      <a href="{% url 'logout_acc' %}">Выйти</a>
-    {% else %}
-      <a href="{% url 'login_acc' %}">Войти</a>
-    {% endif %}
-  </div>
+  <main>
+    <h2>Испания, Мадрид</h2>
+    <p>Добро пожаловать в главную страницу футбольного клуба Реал Мадрид!</p>
 
-  <h2>Испания, Мадрид</h2>
-  <p>Добро пожаловать в главную страницу футбольного клуба Реал Мадрид!</p>
+    <div class="content-wrapper" style="display:flex; gap:20px;">
+      <!-- Список студентов слева -->
+      <section class="students_container" style="flex-grow:1;">
+        {% for student in students %}
+          <div class="student_card">
+            <div class="student_avatar">
+              <a href="{% url 'student_detail' student.pk %}">
+                {% if student.avatar %}
+                  <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" />
+                {% else %}
+                  Нет аватара
+                {% endif %}
+              </a>
+            </div>
 
-  <div class="top_panel">
-    <div class="filter_section">
-      <form method="GET">
-        {{ filter.form.as_div }}
-        <div class="actions">
-          <button class="create-btn">Применить фильтр</button>
-        </div>
-      </form>
-    </div>
-  </div>
+            <div>Имя: {{ student.name|default:'—' }}</div>
+            <div>Фамилия: {{ student.surname|default:'—' }}</div>
+            <div>Возраст: {{ student.age|default:'—' }}</div>
+            <div>
+              Должность:{% if student.group %}
+                {{ student.group.name }}
+              {% else %}
+                Без группы
+              {% endif %}
+            </div>
+            <div>
+              Баланс: {{ student.contract.balance|default:'0' }}
+              {% if user.is_authenticated and student.contract %}
+                <form method="post" action="{% url 'student_payment' student.contract.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="amount" value="8000" />
+                  <button type="submit">Оплатить 8000</button>
+                </form>
+                <a href="{% url 'student_payment_page' student.contract.pk %}">Оплатить произвольно</a>
+              {% elif not user.is_authenticated %}
+                <p>
+                  <em>Авторизуйтесь, чтобы оплачивать.</em>
+                </p>
+              {% endif %}
+            </div>
+          </div>
+        {% empty %}
+          <p>Нет студентов для отображения.</p>
+        {% endfor %}
+      </section>
 
-  <div class="students_container">
-    {% for student in students %}
-      <div class="student_card">
-        <div>
-          <a href="{% url 'student_detail' student.pk %}">
-            {% if student.avatar %}
-              <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img" />
-            {% else %}
-              Нет аватара
-            {% endif %}
-          </a>
-        </div>
-
-        <div>Имя: {{ student.name|default:'—' }}</div>
-        <div>Фамилия: {{ student.surname|default:'—' }}</div>
-        <div>Возраст: {{ student.age|default:'—' }}</div>
-        <div>
-          Должность: {% if student.group %}{{ student.group.name }}{% else %}Без группы{% endif %}
-        </div>
-        <div>
-          Баланс: {{ student.contract.balance|default:'0' }}
-
-          {% if user.is_authenticated and student.contract %}
-            <!-- POST для фиксированной оплаты -->
-            <form method="post" action="{% url 'student_payment' student.contract.pk %}">
-              {% csrf_token %}
-              <input type="hidden" name="amount" value="8000" />
-              <button type="submit" class="pay-btn">Оплатить 8000</button>
-            </form>
-
-            <!-- Ссылка на страницу с формой для произвольной суммы -->
-            <a href="{% url 'student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>
-          {% elif not user.is_authenticated %}
-            <p><em>Авторизуйтесь, чтобы оплачивать.</em></p>
+      <!-- Sidebar справа -->
+      <aside class="sidebar" style="width:250px; flex-shrink:0;">
+        <div class="auth-bar">
+          {% if user.is_authenticated %}
+            <span>Здравствуйте, {{ user.username }}!</span>
+            <a href="{% url 'student_list' %}">Личный кабинет</a>
+            <a href="{% url 'logout_acc' %}">Выйти</a>
+          {% else %}
+            <a href="{% url 'login_acc' %}">Войти</a>
           {% endif %}
         </div>
-      </div>
-    {% empty %}
-      <p>Нет студентов для отображения.</p>
-    {% endfor %}
-  </div>
 
-  {% if is_paginated %}
-    <div class="pagination">
-      <div class="pagination_btns">
+        <div class="filter-aside">
+          <h3>Фильтр студентов</h3>
+          <form method="GET">
+            {{ filter.form.as_div }}
+            <button type="submit">Применить фильтр</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+
+    {% if is_paginated %}
+      <div class="pagination">
         {% if page_obj.has_previous %}
-          <a class="page_link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+          <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
         {% else %}
-          <span class="page_link disabled">Предыдущая</span>
+          <span>Предыдущая</span>
         {% endif %}
 
         {% for i in paginator.page_range %}
           {% if page_obj.number == i %}
-            <span class="page_link current">{{ i }}</span>
+            <span>{{ i }}</span>
           {% else %}
-            <a class="page_link" href="?page={{ i }}">{{ i }}</a>
+            <a href="?page={{ i }}">{{ i }}</a>
           {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-          <a class="page_link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
+          <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
         {% else %}
-          <span class="page_link disabled">Следующая</span>
+          <span>Следующая</span>
         {% endif %}
       </div>
-    </div>
-  {% endif %}
-</main>
+    {% endif %}
+  </main>
 {% endblock %}
