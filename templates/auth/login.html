@@ -3,39 +3,39 @@
 {% block blocktitle %}Авторизация{% endblock %}
 
 {% block content %}
-<main>
-  <h1>Вход в систему</h1>
+<main style="display:flex; justify-content:center; align-items:center; min-height:80vh;">
 
-  <div class="student_container">
-    <div class="student_form">
-      <form method="post" action="{% url 'login_acc' %}">
-        {% csrf_token %}
+  <div class="student_card">
+    <h1 style="margin-bottom:20px;">Вход в систему</h1>
 
-        <div class="student_input">
-          <label for="username">Имя пользователя</label>
-          <input type="text" name="username" required>
-        </div>
+    <form method="post" action="{% url 'login_acc' %}">
+      {% csrf_token %}
 
-        <div class="student_input">
-          <label for="password">Пароль</label>
-          <input type="password" name="password" required>
-        </div>
+      <div class="student_input" style="margin-bottom:15px; text-align:left;">
+        <label for="username">Имя пользователя</label>
+        <input type="text" name="username" required>
+      </div>
 
-        <div class="student_form_button">
-          <input type="submit" value="Войти">
-        </div>
-      </form>
+      <div class="student_input" style="margin-bottom:20px; text-align:left;">
+        <label for="password">Пароль</label>
+        <input type="password" name="password" required>
+      </div>
 
-      <p>Нет аккаунта? <a href="{% url 'register_acc' %}">Зарегистрироваться</a></p>
+      <div class="student_form_button">
+        <input type="submit" value="Войти" class="submit-btn">
+      </div>
+    </form>
 
-      {% if messages %}
-        <div class="success-message">
-          {% for message in messages %}
-            <p>{{ message }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
+    <p style="margin-top:15px;">Нет аккаунта? <a href="{% url 'register_acc' %}">Зарегистрироваться</a></p>
+
+    {% if messages %}
+      <div class="success-message" style="margin-top:15px; color:red; text-align:left;">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
+
 </main>
 {% endblock %}

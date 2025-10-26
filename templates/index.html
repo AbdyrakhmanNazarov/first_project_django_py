@@ -26,7 +26,7 @@
             </div>
 
             <div>Имя: {{ student.name|default:'—' }}</div>
-            <div>Фамилия: {{ student.surname|default:'—' }}</div>
+            <div>Фамилия: {{ student.surname|default:'—'|upper}}</div>
             <div>Возраст: {{ student.age|default:'—' }}</div>
             <div>
               Должность:{% if student.group %}
@@ -50,6 +50,8 @@
                 </p>
               {% endif %}
             </div>
+            <div>Активный: {{ student.name|yesno }}</div>
+            <div>Дата: {{ student.join_date|date:"Y.m.d"}}</div>
           </div>
         {% empty %}
           <p>Нет студентов для отображения.</p>

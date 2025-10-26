@@ -109,19 +109,18 @@ footer {
 }
 
 /* ============================= */
-/* Карточки студентов            */
+/* Карточки студентов/новостей   */
 /* ============================= */
 .students_container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
-    margin-bottom: 20px; /* место для пагинации */
+    margin-bottom: 20px;
 }
 
 .student_card,
 .student_card_detail {
-    width: 300px;          /* фиксированная ширина */
-    height: 400px;         /* фиксированная высота */
+    width: 300px;
     background: rgba(255, 255, 255, 0.85);
     padding: 15px;
     border-radius: 10px;
@@ -134,7 +133,6 @@ footer {
     color: #333;
 }
 
-/* при наведении */
 .student_card:hover,
 .student_card_detail:hover {
     transform: translateY(-5px);
@@ -150,22 +148,31 @@ footer {
     margin-bottom: 10px;
 }
 
-.student_card_detail {
-    min-height: auto;
-    text-align: left;
-    align-items: flex-start;
+/* ============================= */
+/* Контент внутри карточки       */
+/* ============================= */
+.student_card .news-content,
+.student_card_detail > div:not(.student_image) {
+    width: 100%;
+}
+
+.student_card .news-content p,
+.student_card_detail > div:not(.student_image) p,
+.student_card_detail > div:not(.student_image) strong {
+    margin-bottom: 5px;
 }
 
 /* ============================= */
-/* Центрирование карточки detail */
-.detail-page .cont_min_page {
-    display: flex;
-    justify-content: center;
-    align-items: center; /* вертикальное центрирование */
-}
-
-.detail-page .student_card_detail {
-    margin: 0;
+/* Карточка на странице деталей новости */
+/* ============================= */
+.news_detail_card {
+    width: 70%;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
 }
 
 /* ============================= */
@@ -245,14 +252,14 @@ footer {
 }
 
 /* ============================= */
-/* Sidebar и фильтр               */
+/* Sidebar и фильтр              */
 /* ============================= */
 .sidebar,
 .filter-aside {
     background: rgba(255, 255, 255, 0.85);
     padding: 15px;
     border-radius: 10px;
-    color: #000; /* черный текст внутри фильтров */
+    color: #000;
 }
 
 .filter-aside form label,
@@ -276,6 +283,7 @@ footer {
     header .navigations { margin-top: 10px; }
     .content-wrapper { flex-direction: column; }
     .filter-aside { width: 100%; margin-top: 20px; }
+    .news_detail_card { width: 90%; } /* чуть шире на планшете */
 }
 
 @media (max-width: 600px) {
@@ -284,6 +292,7 @@ footer {
     .student_card,
     .student_card_detail { min-height: auto; }
     .students_container { grid-template-columns: 1fr; }
+    .news_detail_card { width: 95%; } /* почти всю ширину на телефоне */
 }
 
 /* ============================= */

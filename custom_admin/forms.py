@@ -17,6 +17,7 @@ class StudentModelForm(forms.ModelForm):
             "avatar",
             "is_active",
             "tags",
+            "join_date",
         )
         labels = {
             "name": "Имя студента",
@@ -30,6 +31,7 @@ class StudentModelForm(forms.ModelForm):
             "avatar": "Аватарка",
             "is_active": "Активен",
             "tags": "Теги",
+            "join_date": "Дата присоединение",
         }
         widgets = {
             "name": forms.TextInput(attrs={"class": "student_input"}),
@@ -42,6 +44,9 @@ class StudentModelForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"class": "student_input", "rows": 3}),
             "avatar": forms.ClearableFileInput(attrs={"class": "student_input"}),
             "tags": forms.CheckboxSelectMultiple(attrs={"class": "student_input"}),
+            "join_date": forms.DateInput(
+                attrs={"class": "student_input", "type": "date"}
+            ),
         }
 
 

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block blocktitle %}
+  {{ news.title|default:"Детали новости" }}
+{% endblock %}
+
+{% block content %}
+  <h1>Детали новости</h1>
+
+  <div class="container">
+    <div class="menu">
+      <div class="page-actions">
+        <a href="{% url 'news_list' %}">
+          <button class="back-btn">⬅ Назад</button>
+        </a>
+      </div>
+
+      {% if user.is_authenticated and user.is_staff %}
+        <div class="actions">
+          <a href="{% url 'news_update' news.pk %}">
+            <button class="edit-btn">Редактировать</button>
+          </a>
+          <a href="{% url 'news_delete' news.pk %}">
+            <button class="delete-btn">Удалить</button>
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="student_container">
+    <!-- Добавили класс news_detail_card -->
+    <div class="student_card_detail news_detail_card">
+      <div class="student_image">
+        {% if news.image %}
+          <img src="{{ news.image.url }}" alt="{{ news.title }}" class="avatar-img">
+        {% else %}
+          Нет изображения
+        {% endif %}
+      </div>
+
+      <div><strong>Название:</strong> {{ news.title|default:"Без названия" }}</div>
+      <div><strong>Подзаголовок:</strong> {{ news.subtitle|default:"Без подзаголовка" }}</div>
+      <div><strong>Описание:</strong> {{ news.content|safe }}</div>
+
+      <div>
+        <strong>Категория:</strong>
+        {% if news.category %}
+          {{ news.category.name }}
+        {% else %}
+          Без категории
+        {% endif %}
+      </div>
+
+      <div><strong>Дата публикации:</strong> {{ news.created_at|date:"d.m.Y H:i" }}</div>
+      <div><strong>Статус:</strong> {% if news.is_active %}Активна{% else %}Неактивна{% endif %}</div>
+    </div>
+  </div>
+{% endblock %}

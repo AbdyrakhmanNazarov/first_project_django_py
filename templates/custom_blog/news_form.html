@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block blocktitle %}
+  {% if view.object %}Редактировать новость{% else %}Создать новость{% endif %}
+{% endblock %}
+
+{% block content %}
+  <h1>{% if view.object %}Редактировать новость{% else %}Создать новость{% endif %}</h1>
+
+  <div class="container">
+    <div class="menu">
+      <div class="page-actions">
+        <a href="{% url 'news_list' %}"><button class="back-btn">⬅ Назад</button></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="student_container">
+    <!-- Добавили класс news_detail_card -->
+    <div class="student_form news_detail_card">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+
+        <div class="student_form_button">
+          <input type="submit" value="{% if view.object %}Сохранить{% else %}Создать{% endif %}" class="submit-btn" />
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

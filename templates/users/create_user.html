@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block blocktitle %}Добавить пользователя{% endblock %}
+{% block content %}
+<h1>Добавить нового пользователя</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="submit-btn">Создать</button>
+</form>
+{% endblock %}

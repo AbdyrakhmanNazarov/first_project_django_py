@@ -1,35 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block blocktitle %}Admin Dashboard{% endblock %}
+{% block blocktitle %}
+  Admin Dashboard
+{% endblock %}
 
 {% block content %}
-<main class="cont_min_page">
-
-  <div class="content-block">
-    <h1>Добро пожаловать, {{ user.username }}!</h1>
-    <p>Используйте кнопки ниже для управления студентами, группами и тегами..</p>
-  </div>
-
-  <div class="content-block" style="display: flex; gap: 20px; flex-wrap: wrap;">
-    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; text-align: center;">
-      <h3>Total Students</h3>
-      <p>{{ total_students }}</p>
+  <main class="cont_min_page">
+    <div class="content-block">
+      <h1>Добро пожаловать, {{ user.username }}!</h1>
+      <p>Используйте кнопки ниже для управления студентами, группами и тегами..</p>
     </div>
-    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; text-align: center;">
-      <h3>Total Groups</h3>
-      <p>{{ total_groups }}</p>
-    </div>
-    <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; text-align: center;">
-      <h3>Total Tags</h3>
-      <p>{{ total_tags }}</p>
-    </div>
-  </div>
 
-  <div class="content-block" style="display: flex; gap: 15px; flex-wrap: wrap;">
-    <a href="{% url 'create_student' %}" class="create-btn">➕ Add Student</a>
-    <a href="{% url 'student_list' %}" class="edit-btn">📋 View Students</a>
-    <a href="{% url 'create_group' %}" class="submit-btn">➕ Add Group</a>
-    <a href="{% url 'create_tag' %}" class="submit-btn">➕ Add Tag</a>
-  </div>
-</main>
+    <div class="content-block" style="display: flex; gap: 15px; flex-wrap: wrap;">
+      <a href="{% url 'user_list' %}" class="edit-btn">Пользователи</a>
+      <a href="{% url 'student_list' %}" class="edit-btn">Студенты</a>
+      <a href="{% url 'create_group' %}" class="submit-btn">Добавить группу</a>
+      <a href="{% url 'create_tag' %}" class="submit-btn">Добавить теги</a>
+    </div>
+  </main>
 {% endblock %}

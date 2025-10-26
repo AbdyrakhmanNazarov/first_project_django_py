@@ -9,8 +9,9 @@
     <a href="{% url 'main' %}">Главная</a>
     <a href="{% url 'about' %}">О нас</a>
     <a href="{% url 'contacts' %}">Контакты</a>
+    <a href="{% url 'news_list' %}">Новости</a>
     {% if request.user.is_staff or request.user.is_superuser %}
-      <a href="{% url "admin_view" %}">Admin Page</a>
+      <a href="{% url 'admin_view' %}">Admin Page</a>
     {% else %}
       <a href="{% url 'register_acc' %}">Registration</a>
       <a href="{% url 'login_acc' %}">Login</a>

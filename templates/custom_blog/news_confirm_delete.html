@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block blocktitle %}
+  Удалить новость
+{% endblock %}
+
+{% block content %}
+  <h1>Удалить новость: "{{ object.title }}"?</h1>
+
+  <div class="container">
+    <div class="menu">
+      <div class="page-actions">
+        <a href="{% url 'news_list' %}"><button class="back-btn">⬅ Назад</button></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="student_container">
+    <div class="student_form">
+      {% if object.image %}
+        <img src="{{ object.image.url }}" alt="{{ object.title }}" class="current-image">
+      {% endif %}
+
+      <p><strong>Подзаголовок:</strong> {{ object.subtitle|default:"Без подзаголовка" }}</p>
+      <p><strong>Категория:</strong> {{ object.category.name|default:"Без категории" }}</p>
+      <p><strong>Дата публикации:</strong> {{ object.created_at|date:"d.m.Y H:i" }}</p>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="student_form_button">
+          <input type="submit" value="Удалить новость" class="submit-btn delete-btn" />
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

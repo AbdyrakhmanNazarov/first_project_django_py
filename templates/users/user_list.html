@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block blocktitle %}Список пользователей{% endblock %}
+{% block content %}
+
+<h1>Все пользователи</h1>
+
+<div class="user-page-wrapper">
+
+  <aside class="filter-sidebar">
+    <h3>Фильтры</h3>
+    <form method="get">
+      {{ form.as_p }}
+      <button type="submit" class="submit-btn">Применить</button>
+      <a href="{% url 'user_list' %}" class="edit-btn">Сбросить</a>
+    </form>
+    <a href="{% url 'create_user' %}" class="submit-btn">Добавить пользователя</a>
+  </aside>
+
+
+  <div class="users-container">
+    {% for u in page_obj %}
+    <div class="user-card">
+      <div class="username">{{ u.username }}</div>
+      <div class="email">Email: {{ u.email|default:"Нет email" }}</div>
+      <div class="status">Активен: {{ u.is_active|yesno:"Да,Нет" }}</div>
+      <div class="actions">
+        
+        <a href="{% url 'edit_user' u.id %}" class="edit-btn">Редактировать</a>
+        <a href="{% url 'delete_user' u.id %}" class="delete-btn">Удалить</a>
+      </div>
+    </div>
+    {% empty %}
+    <p>Пользователи не найдены</p>
+    {% endfor %}
+  </div>
+</div>
+
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.username %}&username={{ request.GET.username }}{% endif %}{% if request.GET.email %}&email={{ request.GET.email }}{% endif %}">⬅ Назад</a>
+  {% endif %}
+
+  <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.username %}&username={{ request.GET.username }}{% endif %}{% if request.GET.email %}&email={{ request.GET.email }}{% endif %}">Вперед ➡</a>
+  {% endif %}
+</div>
+
+{% endblock %}

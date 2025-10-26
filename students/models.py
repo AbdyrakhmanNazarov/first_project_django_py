@@ -37,7 +37,7 @@ class Student(models.Model):
     group = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Группа")
     phone_number = PhoneNumberField(region="KG", default="+996000000000", verbose_name="Телефон")
     avatar = models.ImageField(upload_to="Фото_футболистов", null=True, blank=True)
-    join_date = models.DateField(auto_now_add=True, verbose_name="Дата присоединения")
+    join_date = models.DateField(auto_now_add=False, editable=True, verbose_name="Дата присоединения") 
     updated_date = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
     tags = models.ManyToManyField(Tag, related_name="students", blank=True)

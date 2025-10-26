@@ -20,34 +20,33 @@
     <div class="student_card_detail">
       <div class="student_image">
         {% if student.avatar %}
-          <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img">
+          <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" class="avatar-img" />
         {% else %}
           Нет аватара
         {% endif %}
       </div>
 
-      <div>Имя: {{ student.name|default:"Нет имени" }}</div>
-      <div>Фамилия: {{ student.surname|default:"Нет фамилии" }}</div>
-      <div>Возраст: {{ student.age|default:"Не указан" }}</div>
-      <div>Номер футболиста: {{ student.number|default:"Не указан" }}</div>
+      <div>Имя: {{ student.name|default:'Нет имени' }}</div>
+      <div>Фамилия: {{ student.surname|default:'Нет фамилии' }}</div>
+      <div>Возраст: {{ student.age|default:'Не указан' }}</div>
+      <div>Номер футболиста: {{ student.number|default:'Не указан' }}</div>
 
       <div>
-        Группа: 
-        {% if student.group %}
+        Группа:{% if student.group %}
           {{ student.group.name }}
         {% else %}
           Без группы
         {% endif %}
       </div>
 
-      <div>Email: {{ student.email|default:"Нет email" }}</div>
-      <div>Телефон: {{ student.phone_number|default:"Нет номера" }}</div>
-      <div>Комментарий: {{ student.description|default:"Нет комментария" }}</div>
+      <div>Email: {{ student.email|default:'Нет email' }}</div>
+      <div>Телефон: {{ student.phone_number|default:'Нет номера' }}</div>
+      <div>Комментарий: {{ student.description|default:'Нет комментария' }}</div>
       <div>Дата присоединения: {{ student.join_date }}</div>
       <div>Дата обновления: {{ student.updated_date }}</div>
 
-      <div>Теги: 
-        {% if student.tags.exists %}
+      <div>
+        Теги:{% if student.tags.exists %}
           {% for tag in student.tags.all %}
             <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
           {% endfor %}
@@ -58,10 +57,10 @@
 
       {% if student.contract %}
         <div class="student_payment">
-          <strong>Баланс:</strong> {{ student.contract.balance|default:"0" }}
+          <strong>Баланс:</strong> {{ student.contract.balance|default:'0' }}
           <form method="post" action="{% url 'student_payment' student.contract.pk %}">
             {% csrf_token %}
-            <input type="hidden" name="amount" value="8000">
+            <input type="hidden" name="amount" value="8000" />
             <button type="submit" class="pay-btn">Оплатить 8000</button>
           </form>
           <a href="{% url 'student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>

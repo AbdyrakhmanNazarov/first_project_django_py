@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block blocktitle %}
+  {{ title }}
+{% endblock %}
+
+{% block content %}
+<div class="content-wrapper" style="display:flex; gap:20px;">
+
+  <section class="students_container" style="flex-grow:1;">
+    {% if news_list %}
+      {% for news in news_list %}
+        <div class="student_card">
+          <div class="student_avatar">
+            {% if news.image %}
+              <img src="{{ news.image.url }}" alt="{{ news.title }}">
+            {% else %}
+              <div class="no-image">Нет изображения</div>
+            {% endif %}
+          </div>
+
+          <div class="news-content">
+            <h2 class="news-title">{{ news.title|default:"Без названия" }}</h2>
+            <h3 class="news-subtitle">{{ news.subtitle }}</h3>
+
+            <p class="news-meta">
+              <strong>Категория:</strong> {{ news.category.name|default:"Без категории" }}<br>
+              <strong>Дата:</strong> {{ news.created_at|date:"d.m.Y H:i" }}
+            </p>
+
+            <a href="{% url 'news_detail' news.pk %}" class="read-more">Подробнее →</a>
+
+            {% if user.is_authenticated and user.is_staff %}
+              <div class="news-actions">
+                <a href="{% url 'news_update' news.pk %}" class="edit-btn">Редактировать</a>
+                <a href="{% url 'news_delete' news.pk %}" class="delete-btn">Удалить</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="no-news">Пока нет новостей.</p>
+    {% endif %}
+
+    {% if user.is_authenticated and user.is_staff %}
+      <a href="{% url 'news_create' %}" class="create-btn">➕ Добавить новость</a>
+    {% endif %}
+  </section>
+
+  <aside class="sidebar" style="width:250px; flex-shrink:0;">
+    <div class="filter-aside">
+      <h3>Фильтр новостей</h3>
+      <form method="GET">
+        {{ filter.form }} 
+        <button type="submit">Применить фильтр</button>
+      </form>
+    </div>
+  </aside>
+</div>
+
+{% if is_paginated %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Предыдущая</a>
+    {% else %}
+      <span class="disabled">Предыдущая</span>
+    {% endif %}
+
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <span class="current">{{ i }}</span>
+      {% else %}
+        <a href="?page={{ i }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">{{ i }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">Следующая</a>
+    {% else %}
+      <span class="disabled">Следующая</span>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}
