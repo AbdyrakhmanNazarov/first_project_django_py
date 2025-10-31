@@ -13,9 +13,8 @@ def user_list(request):
         return redirect("admin_dashboard")
 
     form = UserFilterForm(request.GET or None)
-    users = User.objects.all()
+    users = User.objects.all().order_by("id") 
 
-    # Применяем фильтры
     if form.is_valid():
         username = form.cleaned_data.get("username")
         email = form.cleaned_data.get("email")
@@ -24,8 +23,7 @@ def user_list(request):
         if email:
             users = users.filter(email__icontains=email)
 
-    # Пагинация
-    paginator = Paginator(users, 10)  # 10 пользователей на страницу
+    paginator = Paginator(users, 4)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -33,7 +31,6 @@ def user_list(request):
         "form": form,
         "page_obj": page_obj
     })
-
 
 @login_required
 def create_user(request):

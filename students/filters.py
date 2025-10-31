@@ -1,5 +1,4 @@
 import django_filters
-
 from .models import Student, Group, Tag
 from django import forms
 

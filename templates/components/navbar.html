@@ -10,8 +10,12 @@
     <a href="{% url 'about' %}">О нас</a>
     <a href="{% url 'contacts' %}">Контакты</a>
     <a href="{% url 'news_list' %}">Новости</a>
-    {% if request.user.is_staff or request.user.is_superuser %}
-      <a href="{% url 'admin_view' %}">Admin Page</a>
+
+    {% if request.user.is_authenticated %}
+      {% if request.user.is_staff or request.user.is_superuser %}
+        <a href="{% url 'admin_view' %}">Admin Page</a>
+      {% endif %}
+      <a href="{% url 'logout_acc' %}">Выйти</a>
     {% else %}
       <a href="{% url 'register_acc' %}">Registration</a>
       <a href="{% url 'login_acc' %}">Login</a>

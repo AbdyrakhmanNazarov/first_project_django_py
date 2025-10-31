@@ -3,7 +3,6 @@ from django.core.paginator import Paginator
 from students.models import Student
 from students.filters import StudentFilter
 
-
 # ===============================
 # Главная страница (открыта для всех)
 # ===============================

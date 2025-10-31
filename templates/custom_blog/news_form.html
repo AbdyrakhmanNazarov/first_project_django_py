@@ -11,13 +11,13 @@
   <div class="container">
     <div class="menu">
       <div class="page-actions">
-        <a href="{% url 'news_list' %}"><button class="back-btn">⬅ Назад</button></a>
+        <a href="{% url 'news_list' %}"><button class="back-btn">Назад</button></a>
       </div>
     </div>
   </div>
 
   <div class="student_container">
-    <!-- Добавили класс news_detail_card -->
+
     <div class="student_form news_detail_card">
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}

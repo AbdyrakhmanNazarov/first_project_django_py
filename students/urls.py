@@ -6,7 +6,7 @@ from students.views import (
 )
 
 urlpatterns = [
-    # Главная About Contacts
+    # Главная, About, Contacts
     path("", MainTemplateView.as_view(), name="main"),
     path("about/", AboutTemplateView.as_view(), name="about"),
     path("contacts/", ContactsTemplateView.as_view(), name="contacts"),

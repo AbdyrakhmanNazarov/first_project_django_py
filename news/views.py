@@ -5,6 +5,7 @@ from .models import News
 from .forms import NewsModelForm
 from .filters import NewsFilter
 
+
 class NewsListView(FilterView):
     model = News
     template_name = "custom_blog/news.html"
@@ -13,14 +14,12 @@ class NewsListView(FilterView):
     paginate_by = 3
 
     def get_queryset(self):
-        # показываем только активные новости
         return News.objects.filter(is_active=True).order_by("-created_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Новости"
-        # берём фильтр из встроенного filterset
-        context["filter"] = context.get("filterset")
+        context["filterset"] = self.filterset 
         return context
 
 class NewsDetailView(DetailView):
@@ -28,17 +27,20 @@ class NewsDetailView(DetailView):
     template_name = "custom_blog/news_detail.html"
     context_object_name = "news"
 
+
 class NewsCreateView(CreateView):
     model = News
     form_class = NewsModelForm
     template_name = "custom_blog/news_form.html"
     success_url = reverse_lazy("news_list")
 
+
 class NewsUpdateView(UpdateView):
     model = News
     form_class = NewsModelForm
     template_name = "custom_blog/news_form.html"
     success_url = reverse_lazy("news_list")
+
 
 class NewsDeleteView(DeleteView):
     model = News

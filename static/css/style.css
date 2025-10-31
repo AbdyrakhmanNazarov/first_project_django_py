@@ -109,28 +109,41 @@ footer {
 }
 
 /* ============================= */
+/* Контент-wrapper (общий)       */
+/* ============================= */
+.content-wrapper {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* ============================= */
 /* Карточки студентов/новостей   */
 /* ============================= */
 .students_container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: flex;
+    /* flex для news.html */
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 20px;
-    margin-bottom: 20px;
+    flex-grow: 1;
+    /* grid можно использовать для других страниц */
 }
 
 .student_card,
 .student_card_detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* для всех карточек */
     width: 300px;
     background: rgba(255, 255, 255, 0.85);
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     text-align: center;
-    transition: transform 0.2s;
     color: #333;
+    transition: transform 0.2s;
 }
 
 .student_card:hover,
@@ -148,22 +161,20 @@ footer {
     margin-bottom: 10px;
 }
 
-/* ============================= */
-/* Контент внутри карточки       */
-/* ============================= */
+/* Контент внутри карточки */
 .student_card .news-content,
-.student_card_detail > div:not(.student_image) {
+.student_card_detail>div:not(.student_image) {
     width: 100%;
 }
 
 .student_card .news-content p,
-.student_card_detail > div:not(.student_image) p,
-.student_card_detail > div:not(.student_image) strong {
+.student_card_detail>div:not(.student_image) p,
+.student_card_detail>div:not(.student_image) strong {
     margin-bottom: 5px;
 }
 
 /* ============================= */
-/* Карточка на странице деталей новости */
+/* Детальная карточка новости    */
 /* ============================= */
 .news_detail_card {
     width: 70%;
@@ -197,10 +208,21 @@ footer {
     font-size: 0.9rem;
 }
 
-.back-btn { background-color: gray; }
-.delete-btn { background-color: red; }
-.edit-btn { background-color: orange; }
-.pay-btn { background-color: green; }
+.back-btn {
+    background-color: gray;
+}
+
+.delete-btn {
+    background-color: red;
+}
+
+.edit-btn {
+    background-color: orange;
+}
+
+.pay-btn {
+    background-color: green;
+}
 
 .create-btn:hover,
 .submit-btn:hover,
@@ -220,7 +242,8 @@ footer {
     flex-wrap: wrap;
     gap: 8px;
     width: 100%;
-    margin-top: 10px;
+    margin: 40px auto 30px;
+    /* объединено */
 }
 
 .pagination .page_link,
@@ -276,26 +299,6 @@ footer {
 }
 
 /* ============================= */
-/* Адаптивность                  */
-/* ============================= */
-@media (max-width: 1024px) {
-    header { flex-direction: column; align-items: flex-start; }
-    header .navigations { margin-top: 10px; }
-    .content-wrapper { flex-direction: column; }
-    .filter-aside { width: 100%; margin-top: 20px; }
-    .news_detail_card { width: 90%; } /* чуть шире на планшете */
-}
-
-@media (max-width: 600px) {
-    header .logo h1 { font-size: 1.2rem; }
-    header .navigations a { font-size: 0.9rem; }
-    .student_card,
-    .student_card_detail { min-height: auto; }
-    .students_container { grid-template-columns: 1fr; }
-    .news_detail_card { width: 95%; } /* почти всю ширину на телефоне */
-}
-
-/* ============================= */
 /* Контент блоки (About, Contacts, Admin Page) */
 /* ============================= */
 .content-block {
@@ -305,4 +308,204 @@ footer {
     margin-bottom: 20px;
     line-height: 1.6;
     color: #fff;
+}
+
+/* ============================= */
+/* Контейнер формы добавления пользователя */
+/* ============================= */
+.add-user-container {
+    width: 70%;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    color: #333;
+    text-align: left;
+    backdrop-filter: blur(5px);
+}
+
+.add-user-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.add-user-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.add-user-container form input,
+.add-user-container form select,
+.add-user-container form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.add-user-container .submit-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #0052cc;
+    border-radius: 8px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.add-user-container .submit-btn:hover {
+    background-color: #003d99;
+}
+
+/* ============================= */
+/* Адаптивность формы            */
+/* ============================= */
+@media (max-width: 768px) {
+    .add-user-container {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+/* ============================= */
+/* Страница списка пользователей */
+/* ============================= */
+.user-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #333;
+    height: fit-content;
+}
+
+.users-container {
+    flex: 1;
+    width: 70%;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    color: #333;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.user-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    text-align: center;
+    color: #333;
+}
+
+.user-card:hover {
+    transform: translateY(-5px);
+}
+
+.user-card .username {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.user-card .email,
+.user-card .status {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.user-card .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ============================= */
+/* Адаптивность общая и news.html */
+/* ============================= */
+@media (max-width: 1024px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header .navigations {
+        margin-top: 10px;
+    }
+
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .students_container {
+        justify-content: center;
+    }
+
+    .news_detail_card {
+        width: 90%;
+    }
+}
+
+@media (max-width: 900px) {
+    .user-page-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .filter-sidebar {
+        width: 90%;
+    }
+
+    .users-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 600px) {
+    header .logo h1 {
+        font-size: 1.2rem;
+    }
+
+    header .navigations a {
+        font-size: 0.9rem;
+    }
+
+    .student_card {
+        width: 100%;
+    }
+
+    .students_container {
+        grid-template-columns: 1fr;
+    }
+
+    .news_detail_card {
+        width: 95%;
+    }
 }
