@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block blocktitle %}
+  Ваша корзина
+{% endblock %}
+
+{% block content %}
+<h2>Корзина студентов</h2>
+
+{% if students %}
+  <table>
+    <thead>
+      <tr>
+        <th>Аватар</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Группа</th>
+        <th>Баланс</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for student in students %}
+      <tr>
+        <td>
+          {% if student.avatar %}
+            <img src="{{ student.avatar.url }}" width="50" height="50" alt="{{ student.name }}">
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>{{ student.name|default:"—" }}</td>
+        <td>{{ student.surname|default:"—" }}</td>
+        <td>{{ student.get_group_name }}</td>
+        <td>{{ student.get_balance }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="margin-top: 20px;">
+    <a href="{% url 'clear_cart' %}" class="btn-clear-cart">Очистить корзину</a>
+  </div>
+
+{% else %}
+  <p>Ваша корзина пуста.</p>
+{% endif %}
+{% endblock %}

@@ -26,7 +26,7 @@
             </div>
 
             <div>Имя: {{ student.name|default:'—' }}</div>
-            <div>Фамилия: {{ student.surname|default:'—'|upper}}</div>
+            <div>Фамилия: {{ student.surname|default:'—'|upper }}</div>
             <div>Возраст: {{ student.age|default:'—' }}</div>
             <div>
               Должность:{% if student.group %}
@@ -35,23 +35,32 @@
                 Без группы
               {% endif %}
             </div>
-            <div>
-              Баланс: {{ student.contract.balance|default:'0' }}
-              {% if user.is_authenticated and student.contract %}
-                <form method="post" action="{% url 'student_payment' student.contract.pk %}">
-                  {% csrf_token %}
-                  <input type="hidden" name="amount" value="8000" />
-                  <button type="submit">Оплатить 8000</button>
-                </form>
-                <a href="{% url 'student_payment_page' student.contract.pk %}">Оплатить произвольно</a>
-              {% elif not user.is_authenticated %}
-                <p>
-                  <em>Авторизуйтесь, чтобы оплачивать.</em>
-                </p>
-              {% endif %}
-            </div>
+            <div>Баланс: {{ student.contract.balance|default:'0' }}</div>
             <div>Активный: {{ student.name|yesno }}</div>
-            <div>Дата: {{ student.join_date|date:"Y.m.d"}}</div>
+            <div>Дата: {{ student.join_date|date:'Y.m.d' }}</div>
+
+            <!-- ================= ЛАЙК и КОРЗИНА ================= -->
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'like_student' student_id=student.id %}">
+                {% csrf_token %}
+                <button type="submit" class="like-btn">
+                  ❤️{% if student.id in liked_students %}
+                    Убрать лайк
+                  {% else %}
+                    Лайк
+                  {% endif %}
+                </button>
+              </form>
+
+              <form method="post" action="{% url 'add_to_cart' student_id=student.id %}">
+                {% csrf_token %}
+                <button type="submit" class="cart-btn">🛒 Добавить в корзину</button>
+              </form>
+            {% else %}
+              <p>
+                <em>Войдите, чтобы лайкнуть или добавить в корзину.</em>
+              </p>
+            {% endif %}
           </div>
         {% empty %}
           <p>Нет студентов для отображения.</p>

@@ -1,12 +1,14 @@
 {% load static %}
 <header>
   <div class="logo">
-    <a href="{% url 'main' %}"><img src="{% static 'svg/real-madrid-c-f.svg' %}" alt="" /></a>
+    <a href="{% url 'home' %}">
+      <img src="{% static 'svg/real-madrid-c-f.svg' %}" alt="Реал Мадрид" />
+    </a>
     <h1>Реал Мадрид</h1>
   </div>
 
   <nav class="navigations">
-    <a href="{% url 'main' %}">Главная</a>
+    <a href="{% url 'home' %}">Главная</a>
     <a href="{% url 'about' %}">О нас</a>
     <a href="{% url 'contacts' %}">Контакты</a>
     <a href="{% url 'news_list' %}">Новости</a>
@@ -17,13 +19,13 @@
       {% endif %}
       <a href="{% url 'logout_acc' %}">Выйти</a>
     {% else %}
-      <a href="{% url 'register_acc' %}">Registration</a>
-      <a href="{% url 'login_acc' %}">Login</a>
+      <a href="{% url 'register_acc' %}">Регистрация</a>
+      <a href="{% url 'login_acc' %}">Войти</a>
     {% endif %}
   </nav>
 
-  <form action="{% url 'main' %}" method="GET">
-    <input type="text" name="search" id="" value="{{ search }}" />
-    <input type="submit" />
+  <form class="search-form" action="{% url 'home' %}" method="GET">
+    <input type="text" name="search" placeholder="Поиск" value="{{ request.GET.search|default:'' }}" />
+    <button type="submit">🔍</button>
   </form>
 </header>
