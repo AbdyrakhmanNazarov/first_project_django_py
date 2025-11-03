@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block blocktitle %}Ваш кабинет{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<!-- Ссылки на корзину и лайки -->
+<div style="margin-bottom: 20px;">
+  <a href="{% url 'users:cart_view' %}">Моя корзина ({{ request.session.cart|length|default:0 }})</a> |
+  <a href="{% url 'users:liked_students' %}">Мои лайки ({{ request.session.liked_students|length|default:0 }})</a>
+</div>
+
+<!-- Список студентов -->
+<div class="students-list">
+  {% for student in students %}
+    <div class="student-card" style="border:1px solid #ccc; padding:15px; margin-bottom:10px;">
+      <h3>{{ student.name }}</h3>
+      {% if student.group %}
+        <p>Группа: {{ student.group.name }}</p>
+      {% endif %}
+      <p>Теги: 
+        {% for tag in student.tags.all %}
+          {{ tag.name }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+
+      <!-- Просмотр студента -->
+      <div class="crud-buttons" style="margin-bottom:10px;">
+        <a href="{% url 'custom_admin:student_detail' student.pk %}">Просмотр</a>
+      </div>
+
+      <!-- Лайк -->
+      {% if student.id in request.session.liked_students %}
+        <a href="{% url 'users:like_student' student_id=student.id %}">❤️ Убрать лайк</a>
+      {% else %}
+        <a href="{% url 'users:like_student' student_id=student.id %}">🤍 Поставить лайк</a>
+      {% endif %}
+
+      <!-- Корзина -->
+      {% if student.id in request.session.cart %}
+        <span style="margin-left:10px; color:green;">✔ В корзине</span>
+      {% else %}
+        <a href="{% url 'users:add_to_cart' student_id=student.id %}" style="margin-left:10px;">Добавить в корзину</a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p>Студентов пока нет.</p>
+  {% endfor %}
+</div>
+
+<!-- Пагинация -->
+<div class="pagination" style="margin-top:15px;">
+  {% if students.has_previous %}
+    <a href="?page={{ students.previous_page_number }}">Назад</a>
+  {% endif %}
+
+  <span>Страница {{ students.number }} из {{ students.paginator.num_pages }}</span>
+
+  {% if students.has_next %}
+    <a href="?page={{ students.next_page_number }}">Вперед</a>
+  {% endif %}
+</div>
+{% endblock %}

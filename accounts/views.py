@@ -8,7 +8,7 @@ from django.contrib import messages
 # ===============================
 def login_acc(request):
     if request.user.is_authenticated:
-        return redirect("student_list") 
+        return redirect("custom_admin:student_list")  # ✅ исправлено
 
     if request.method == "POST":
         username = request.POST.get("username")
@@ -19,7 +19,7 @@ def login_acc(request):
         if user is not None:
             login(request, user)
             messages.success(request, f"Добро пожаловать, {user.username}!")
-            return redirect("student_list") 
+            return redirect("custom_admin:student_list")  # ✅ исправлено
         else:
             messages.error(request, "Неверное имя пользователя или пароль.")
 
@@ -32,7 +32,7 @@ def login_acc(request):
 def logout_acc(request):
     logout(request)
     messages.info(request, "Вы вышли из аккаунта.")
-    return redirect("login_acc")  
+    return redirect("login_acc")
 
 
 # ===============================
@@ -40,7 +40,7 @@ def logout_acc(request):
 # ===============================
 def register_acc(request):
     if request.user.is_authenticated:
-        return redirect("student_list") 
+        return redirect("custom_admin:student_list")  # ✅ исправлено
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)

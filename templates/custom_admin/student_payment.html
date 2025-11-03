@@ -8,13 +8,13 @@
   <h2>Оплата студента {{ contract.student.name }}</h2>
   <p>Текущий баланс: {{ contract.balance }}</p>
 
-  <form method="post" action="{% url 'student_payment' contract.pk %}">
+  <form method="post" action="{% url 'custom_admin:student_payment' contract.pk %}">
       {% csrf_token %}
       <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
       {{ form.amount }}
       <button type="submit" class="pay-btn">Оплатить</button>
   </form>
 
-  <p><a href="{% url 'student_list' %}">Вернуться к списку студентов</a></p>
+  <p><a href="{% url 'custom_admin:student_list' %}">Вернуться к списку студентов</a></p>
 </main>
 {% endblock %}

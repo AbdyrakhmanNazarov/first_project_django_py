@@ -11,20 +11,26 @@
   <div class="container">
     <div class="menu">
       <div class="page-actions">
-        <a href="{% url 'main' %}"><button class="back-btn">⬅ Назад</button></a>
+        <a href="{% url 'custom_admin:admin_view' %}">
+          <button class="back-btn">⬅ Назад</button>
+        </a>
       </div>
     </div>
   </div>
 
   <div class="student_container">
     <div class="student_form">
-      <form action="{% url 'create_student' %}" method="POST" enctype="multipart/form-data">
+      <form action="{% url 'custom_admin:create_student' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
 
         <div class="extra-links">
-          <a href="{% url 'create_group' %}"><button type="button" class="create-btn">➕ Добавить новую группу</button></a>
-          <a href="{% url 'create_tag' %}"><button type="button" class="create-btn">➕ Добавить новый тег</button></a>
+          <a href="{% url 'custom_admin:create_group' %}">
+            <button type="button" class="create-btn">➕ Добавить новую группу</button>
+          </a>
+          <a href="{% url 'custom_admin:create_tag' %}">
+            <button type="button" class="create-btn">➕ Добавить новый тег</button>
+          </a>
         </div>
 
         <div class="student_form_button">

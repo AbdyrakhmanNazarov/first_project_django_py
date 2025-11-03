@@ -1,12 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block blocktitle %}
+  Создать группу
+{% endblock %}
+
 {% block content %}
   <h1>Добавить новую группу</h1>
 
-  <div class="container">
-    <a href="{% url 'create_student' %}">
-      <button class="back-btn">⬅ Назад</button>
+  <div class="container" style="margin-bottom: 20px;">
+    <a href="{% url 'custom_admin:create_student' %}">
+      <button type="button" class="back-btn">⬅ Назад</button>
     </a>
   </div>
 
@@ -14,7 +18,9 @@
     <form method="POST">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="submit-btn">Создать группу</button>
+      <div class="student_form_button">
+        <button type="submit" class="submit-btn">Создать группу</button>
+      </div>
     </form>
   </div>
 {% endblock %}

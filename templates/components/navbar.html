@@ -15,7 +15,11 @@
 
     {% if request.user.is_authenticated %}
       {% if request.user.is_staff or request.user.is_superuser %}
-        <a href="{% url 'admin_view' %}">Admin Page</a>
+        <a href="{% url 'custom_admin:admin_view' %}">Admin Page</a>
+      {% else %}
+        <a href="{% url 'users:user_page' %}">User Page</a>
+        <a href="{% url 'users:liked_students' %}">Мои лайки</a>
+        <a href="{% url 'users:cart_view' %}">Моя корзина</a>
       {% endif %}
       <a href="{% url 'logout_acc' %}">Выйти</a>
     {% else %}

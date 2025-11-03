@@ -4,36 +4,74 @@ from django.contrib import messages
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+    TemplateView,
+)
 from django.core.paginator import Paginator
-
+from django.contrib.auth.models import User
 from custom_admin.forms import StudentModelForm, GroupForm, TagForm, PaymentForm
 from students.models import Student, Group, Tag, StudentContract
-from students.filters import StudentFilter
+from custom_admin.filters import UserFilter
+from custom_admin.filters import StudentFilter
+from django_filters.views import FilterView
+
+
+class UserListView(LoginRequiredMixin, ListView):
+    login_url = "login_acc"
+    model = User
+    template_name = "users/user_list.html"
+    context_object_name = "users"
+    paginate_by = 3  # количество пользователей на странице
+
+    def get_queryset(self):
+        queryset = super().get_queryset().order_by("-date_joined")
+        self.filterset = UserFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # GET-параметры для сохранения фильтров при пагинации
+        get_params = self.request.GET.copy()
+        if "page" in get_params:
+            get_params.pop("page")
+        context.update({
+            "filter": self.filterset,
+            "get_params": get_params.urlencode(),
+            "title": "Список пользователей"
+        })
+        return context
 
 # ===============================
 # Cookie
 # ===============================
 @login_required(login_url="login_acc")
 def set_cookie_view(request):
-    response = redirect("admin_view") 
+    response = redirect("custom_admin:admin_view")
     response.set_cookie("username", request.user.username, max_age=3600)
     messages.success(request, f"Кука установлена для {request.user.username}!")
     return response
+
 
 @login_required(login_url="login_acc")
 def get_cookie_view(request):
     username = request.COOKIES.get("username", "Гость")
     messages.info(request, f"Привет, {username}")
-    return redirect("admin_view")
+    return redirect("custom_admin:admin_view")
+
 
 @require_POST
 @login_required(login_url="login_acc")
 def delete_cookie_view(request):
-    response = redirect("admin_view")
+    response = redirect("custom_admin:admin_view")
     response.delete_cookie("username")
     messages.warning(request, f"Кука удалена для {request.user.username}!")
     return response
+
 
 # ===============================
 # Session
@@ -43,14 +81,16 @@ def set_session_view(request):
     request.session["username"] = request.user.username
     request.session["user_id"] = request.user.id
     messages.success(request, f"Сессия установлена для {request.user.username}!")
-    return redirect("admin_view")
+    return redirect("custom_admin:admin_view")
+
 
 @login_required(login_url="login_acc")
 def get_session_view(request):
     username = request.session.get("username", "Гость")
     user_id = request.session.get("user_id", "неизвестно")
     messages.info(request, f"Имя: {username}, ID: {user_id}")
-    return redirect("admin_view")
+    return redirect("custom_admin:admin_view")
+
 
 @login_required(login_url="login_acc")
 def visit_counter(request):
@@ -58,14 +98,15 @@ def visit_counter(request):
     visit = request.session.get("visit", 0)
     request.session["visit"] = visit + 1
     messages.info(request, f"Вы {username}, заходили на эту страницу {visit + 1} раз")
-    return redirect("admin_view")
+    return redirect("custom_admin:admin_view")
+
 
 @require_POST
 @login_required(login_url="login_acc")
 def delete_session_view(request):
     request.session.flush()
     messages.warning(request, f"Сессия очищена для {request.user.username}!")
-    return redirect("admin_view")
+    return redirect("custom_admin:admin_view")
 
 
 # ===============================
@@ -76,17 +117,30 @@ class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = "custom_admin/student_list.html"
     context_object_name = "students"
-    paginate_by = 3
+    paginate_by = 3  # количество студентов на странице
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        # применяем фильтр
+        queryset = super().get_queryset().order_by("-join_date")
         self.filterset = StudentFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({"filter": self.filterset, "title": "Личный кабинет"})
+
+        # Сохраняем GET-параметры, кроме page, для пагинации
+        get_params = self.request.GET.copy()
+        if "page" in get_params:
+            get_params.pop("page")
+        context.update(
+            {
+                "filter": self.filterset,
+                "title": "Личный кабинет",
+                "get_params": get_params.urlencode(),  # передадим в шаблон
+            }
+        )
         return context
+
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     login_url = "login_acc"
@@ -94,12 +148,22 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
     template_name = "custom_admin/student_detail.html"
     context_object_name = "student"
 
+
 class StudentCreateView(LoginRequiredMixin, CreateView):
     login_url = "login_acc"
     model = Student
     form_class = StudentModelForm
     template_name = "custom_admin/student_create.html"
-    success_url = reverse_lazy("student_list")
+    success_url = reverse_lazy("custom_admin:student_list")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Студент успешно создан!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Ошибка при создании студента!")
+        return super().form_invalid(form)
+
 
 class StudentUpdateView(LoginRequiredMixin, UpdateView):
     login_url = "login_acc"
@@ -109,28 +173,44 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy(
-            "custom_admin/student_detail", kwargs={"pk": self.object.pk}
+            "custom_admin:student_detail", kwargs={"pk": self.object.pk}
         )
+
+    def form_valid(self, form):
+        messages.success(self.request, "Студент успешно обновлён!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Ошибка при редактировании студента!")
+        return super().form_invalid(form)
+
 
 class StudentDeleteView(LoginRequiredMixin, DeleteView):
     login_url = "login_acc"
     model = Student
     template_name = "custom_admin/student_confirm_delete.html"
-    success_url = reverse_lazy("custom_admin/student_list")
+    success_url = reverse_lazy("custom_admin:student_list")
+
+    def delete(self, request, *args, **kwargs):
+        messages.info(self.request, "Студент успешно удален!")
+        return super().delete(request, *args, **kwargs)
+
 
 class GroupCreateView(LoginRequiredMixin, CreateView):
     login_url = "login_acc"
     model = Group
     form_class = GroupForm
     template_name = "custom_admin/create_group.html"
-    success_url = reverse_lazy("custom_admin/create_student")
+    success_url = reverse_lazy("custom_admin:create_student")
+
 
 class TagCreateView(LoginRequiredMixin, CreateView):
     login_url = "login_acc"
     model = Tag
     form_class = TagForm
     template_name = "custom_admin/create_tag.html"
-    success_url = reverse_lazy("custom_admin/create_student")
+    success_url = reverse_lazy("custom_admin:create_student")
+
 
 # ===============================
 # Оплата студентов
@@ -144,6 +224,7 @@ def student_payment_page(request, pk):
         "custom_admin/student_payment.html",
         {"contract": contract, "form": form},
     )
+
 
 @login_required(login_url="login_acc")
 @require_POST
@@ -160,7 +241,7 @@ def student_payment_view(request, pk):
     else:
         messages.error(request, "Не удалось провести оплату. Проверьте сумму.")
 
-    return redirect("custom_admin/student_list")
+    return redirect("custom_admin:student_list")
 
 
 # ===============================
@@ -188,16 +269,18 @@ class MainTemplateView(TemplateView):
         liked_students = self.request.session.get("liked_students", [])
         cart = self.request.session.get("cart", [])
 
-        context.update({
-            "students": page_obj,
-            "page_obj": page_obj,
-            "paginator": paginator,
-            "is_paginated": page_obj.has_other_pages(),
-            "filter": filterset,
-            "title": "Главная страница",
-            "liked_students": liked_students,
-            "cart": cart,
-        })
+        context.update(
+            {
+                "students": page_obj,
+                "page_obj": page_obj,
+                "paginator": paginator,
+                "is_paginated": page_obj.has_other_pages(),
+                "filter": filterset,
+                "title": "Главная страница",
+                "liked_students": liked_students,
+                "cart": cart,
+            }
+        )
         return context
 
 

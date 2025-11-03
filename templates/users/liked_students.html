@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block blocktitle %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+{% if students %}
+  <ul>
+    {% for student in students %}
+      <li>
+        {{ student.name }} {{ student.surname }} —
+        <a href="{% url 'custom_admin:student_detail' student.pk %}">Просмотр</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Вы пока не поставили ни одного лайка.</p>
+{% endif %}
+{% endblock %}

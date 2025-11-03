@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
       {% block blocktitle %}
-
       {% endblock %}
     </title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -15,8 +14,15 @@
     {% include 'components/navbar.html' %}
 
     <div class="cont_min_page">
-      {% block content %}
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
 
+      {% block content %}
       {% endblock %}
     </div>
 

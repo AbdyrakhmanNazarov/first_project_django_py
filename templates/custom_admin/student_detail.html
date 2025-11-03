@@ -7,11 +7,17 @@
   <div class="container">
     <div class="menu">
       <div class="page-actions">
-        <a href="{% url 'main' %}"><button class="back-btn">⬅ Назад</button></a>
+        <a href="{% url 'custom_admin:admin_view' %}">
+          <button class="back-btn">⬅ Назад</button>
+        </a>
       </div>
       <div class="actions">
-        <a href="{% url 'student_update' pk=student.pk %}"><button class="edit-btn">Редактировать</button></a>
-        <a href="{% url 'student_delete' pk=student.pk %}"><button class="delete-btn">Удалить</button></a>
+        <a href="{% url 'custom_admin:student_update' student.pk %}">
+          <button class="edit-btn">Редактировать</button>
+        </a>
+        <a href="{% url 'custom_admin:student_delete' student.pk %}">
+          <button class="delete-btn">Удалить</button>
+        </a>
       </div>
     </div>
   </div>
@@ -32,7 +38,7 @@
       <div>Номер футболиста: {{ student.number|default:'Не указан' }}</div>
 
       <div>
-        Группа:{% if student.group %}
+        Группа: {% if student.group %}
           {{ student.group.name }}
         {% else %}
           Без группы
@@ -46,7 +52,7 @@
       <div>Дата обновления: {{ student.updated_date }}</div>
 
       <div>
-        Теги:{% if student.tags.exists %}
+        Теги: {% if student.tags.exists %}
           {% for tag in student.tags.all %}
             <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
           {% endfor %}
@@ -58,12 +64,12 @@
       {% if student.contract %}
         <div class="student_payment">
           <strong>Баланс:</strong> {{ student.contract.balance|default:'0' }}
-          <form method="post" action="{% url 'student_payment' student.contract.pk %}">
+          <form method="post" action="{% url 'custom_admin:student_payment' student.contract.pk %}">
             {% csrf_token %}
             <input type="hidden" name="amount" value="8000" />
             <button type="submit" class="pay-btn">Оплатить 8000</button>
           </form>
-          <a href="{% url 'student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>
+          <a href="{% url 'custom_admin:student_payment_page' student.contract.pk %}" class="create-btn">Оплатить произвольно</a>
         </div>
       {% endif %}
     </div>

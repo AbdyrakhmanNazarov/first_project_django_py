@@ -509,3 +509,12 @@ footer {
         width: 95%;
     }
 }
+
+
+/* ===============================
+        message
+=============================== */
+.success {color: green;}
+.error {color: red;}
+.warning {color: orange;}
+.info {color: blue;}

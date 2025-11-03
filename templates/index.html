@@ -1,78 +1,85 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
+{% load custom_tags %}
 
 {% block blocktitle %}
   {{ title }}
 {% endblock %}
 
 {% block content %}
+  {% get_groups as groups %}
+
   <main>
     <h2>Испания, Мадрид</h2>
     <p>Добро пожаловать в главную страницу футбольного клуба Реал Мадрид!</p>
 
-    <div class="content-wrapper" style="display:flex; gap:20px;">
-      <!-- Список студентов слева -->
-      <section class="students_container" style="flex-grow:1;">
-        {% for student in students %}
-          <div class="student_card">
-            <div class="student_avatar">
-              <a href="{% url 'student_detail' student.pk %}">
-                {% if student.avatar %}
-                  <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" />
-                {% else %}
-                  Нет аватара
-                {% endif %}
-              </a>
-            </div>
+    {% for group in groups %}
+      <div>{{ group }}</div>
+    {% endfor %}
 
-            <div>Имя: {{ student.name|default:'—' }}</div>
-            <div>Фамилия: {{ student.surname|default:'—'|upper }}</div>
-            <div>Возраст: {{ student.age|default:'—' }}</div>
-            <div>
-              Должность:{% if student.group %}
-                {{ student.group.name }}
+    <div class="content-wrapper" style="display:flex; gap:20px;">
+      <!-- ========== СПИСОК СТУДЕНТОВ ========== -->
+      <section class="students_container" style="flex-grow:1;">
+        {% if students %}
+          {% for student in students %}
+            <div class="student_card">
+              <div class="student_avatar">
+                <a href="{% url 'custom_admin:student_detail' student.pk %}">
+                  {% if student.avatar %}
+                    <img src="{{ student.avatar.url }}" alt="{{ student.name }} {{ student.surname }}" />
+                  {% else %}
+                    Нет аватара
+                  {% endif %}
+                </a>
+              </div>
+
+              <div>Имя: {{ student.name|default:'—'|capital }}</div>
+              <div>Фамилия: {{ student.surname|default:'—'|upper }}</div>
+              <div>Возраст: {{ student.age|default:'—' }}</div>
+              <div>
+                Должность:
+                {% if student.group %}
+                  {{ student.group.name }}
+                {% else %}
+                  Без группы
+                {% endif %}
+              </div>
+              <div>Баланс: {{ student.contract.balance|default:'0' }}</div>
+              <div>Активный: {{ student.is_active|yesno:"Да,Нет" }}</div>
+              <div>Дата: {{ student.join_date|date:'Y.m.d' }}</div>
+
+              {% if request.user.is_authenticated %}
+                <form method="post" action="{% url 'users:like_student' student_id=student.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="like-btn">
+                    ❤️ {% if student.id in liked_students %} Убрать лайк {% else %} Лайк {% endif %}
+                  </button>
+                </form>
+
+                <form method="post" action="{% url 'users:add_to_cart' student_id=student.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="cart-btn">
+                    🛒 {% if student.id in cart %} В корзине {% else %} Добавить в корзину {% endif %}
+                  </button>
+                </form>
               {% else %}
-                Без группы
+                <p><em>Войдите, чтобы лайкнуть или добавить в корзину.</em></p>
               {% endif %}
             </div>
-            <div>Баланс: {{ student.contract.balance|default:'0' }}</div>
-            <div>Активный: {{ student.name|yesno }}</div>
-            <div>Дата: {{ student.join_date|date:'Y.m.d' }}</div>
-
-            <!-- ================= ЛАЙК и КОРЗИНА ================= -->
-            {% if user.is_authenticated %}
-              <form method="post" action="{% url 'like_student' student_id=student.id %}">
-                {% csrf_token %}
-                <button type="submit" class="like-btn">
-                  ❤️{% if student.id in liked_students %}
-                    Убрать лайк
-                  {% else %}
-                    Лайк
-                  {% endif %}
-                </button>
-              </form>
-
-              <form method="post" action="{% url 'add_to_cart' student_id=student.id %}">
-                {% csrf_token %}
-                <button type="submit" class="cart-btn">🛒 Добавить в корзину</button>
-              </form>
-            {% else %}
-              <p>
-                <em>Войдите, чтобы лайкнуть или добавить в корзину.</em>
-              </p>
-            {% endif %}
-          </div>
-        {% empty %}
+          {% endfor %}
+        {% else %}
           <p>Нет студентов для отображения.</p>
-        {% endfor %}
+        {% endif %}
       </section>
 
-      <!-- Sidebar справа -->
+      <!-- ========== САЙДБАР ========== -->
       <aside class="sidebar" style="width:250px; flex-shrink:0;">
         <div class="auth-bar">
-          {% if user.is_authenticated %}
-            <span>Здравствуйте, {{ user.username }}!</span>
-            <a href="{% url 'student_list' %}">Личный кабинет</a>
+          {% if request.user.is_authenticated %}
+            <p>Здравствуйте, {{ request.user.username }}!</p>
+            <a href="{% url 'custom_admin:student_list' %}">Личный кабинет</a><br>
+            <a href="{% url 'users:user_page' %}">Моя страница</a><br>
             <a href="{% url 'logout_acc' %}">Выйти</a>
           {% else %}
             <a href="{% url 'login_acc' %}">Войти</a>
@@ -82,13 +89,22 @@
         <div class="filter-aside">
           <h3>Фильтр студентов</h3>
           <form method="GET">
-            {{ filter.form.as_div }}
+            {{ filter.form.as_p }}
             <button type="submit">Применить фильтр</button>
           </form>
         </div>
+
+        {% if request.user.is_authenticated %}
+          <div class="user-tools" style="margin-top: 20px;">
+            <h3>Ваши действия</h3>
+            <a href="{% url 'users:cart_view' %}">🛒 Моя корзина</a><br>
+            <a href="{% url 'users:liked_students' %}">❤️ Мои лайки</a>
+          </div>
+        {% endif %}
       </aside>
     </div>
 
+    <!-- ========== ПАГИНАЦИЯ ========== -->
     {% if is_paginated %}
       <div class="pagination">
         {% if page_obj.has_previous %}
@@ -99,7 +115,7 @@
 
         {% for i in paginator.page_range %}
           {% if page_obj.number == i %}
-            <span>{{ i }}</span>
+            <span class="current">{{ i }}</span>
           {% else %}
             <a href="?page={{ i }}">{{ i }}</a>
           {% endif %}

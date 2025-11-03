@@ -15,4 +15,4 @@ class StudentFilter(django_filters.FilterSet):
 
     class Meta:
         model = Student
-        fields = ( "age", "group", "tags")
+        fields = ( "name", "age", "group", "tags")

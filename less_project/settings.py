@@ -58,6 +58,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# После всех других настроек
+LOGIN_URL = 'login_acc'  # куда редиректить, если не авторизован
+LOGIN_REDIRECT_URL = 'custom_admin:student_list'  # куда редиректить после логина
+
 ROOT_URLCONF = "less_project.urls"
 
 TEMPLATES = [

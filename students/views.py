@@ -21,7 +21,6 @@ class MainTemplateView(TemplateView):
         page_number = self.request.GET.get("page")
         page_obj = paginator.get_page(page_number)
 
-        # Получаем лайки и корзину из сессии
         liked_students = self.request.session.get("liked_students", [])
         cart = self.request.session.get("cart", [])
 
